@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Home on arth0s&#39; blog</title>
+    <link>https://arth0s.tech/</link>
+    <description>Recent content in Home on arth0s&#39; blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-gb</language>
+    <lastBuildDate>Sat, 09 Dec 2023 14:40:33 +0300</lastBuildDate><atom:link href="https://arth0s.tech/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>HackTheBox Authority Write-Up</title>
+      <link>https://arth0s.tech/posts/htb-authority/</link>
+      <pubDate>Sat, 09 Dec 2023 14:40:33 +0300</pubDate>
+      
+      <guid>https://arth0s.tech/posts/htb-authority/</guid>
+      
+      <description>Authority is a medium HackTheBox machine that tests your ability to research technologies you may not have come across before and utilise documentation effectively to accomplish your goals. It also involves exploiting Active Directory Certificate Services for domain privilege escalation.
+Enumeration We&amp;rsquo;ll begin with an Nmap scan to find out which ports are open and then perform a more detailed scan in order to obtain more information about them.</description>
+      
+    </item>
+    
+    <item>
+      <title>HackTheBox Zephyr Pro Lab Review</title>
+      <link>https://arth0s.tech/posts/zephyr-review/</link>
+      <pubDate>Sat, 21 Oct 2023 15:09:29 +0300</pubDate>
+      
+      <guid>https://arth0s.tech/posts/zephyr-review/</guid>
+      
+      <description>These days I have been focused on the CPTS Penetration Tester Job Path on HackTheBox Academy and after completing their module on Active Directory Enumeration &amp;amp; Attacks, I decided that I want some hands-on practice.
+I chose to try my hand at Zephyr, one of the Pro Labs offered by HackTheBox on their main platform, in order to put my skills to the test in an unknown corporate-like environment.</description>
+      
+    </item>
+    
+    <item>
+      <title>Ligolo-ng — Pivoting, Reverse Shells and File Transfers</title>
+      <link>https://arth0s.tech/posts/ligolo-ng/</link>
+      <pubDate>Tue, 03 Oct 2023 15:08:50 +0300</pubDate>
+      
+      <guid>https://arth0s.tech/posts/ligolo-ng/</guid>
+      
+      <description>Let&amp;rsquo;s talk about pivoting in the context of ethical hacking. In the simplest of terms, pivoting entails moving deeper into a network that we&amp;rsquo;ve compromised. It&amp;rsquo;s a technique that allows us to reach parts of the network that would otherwise be inaccessible from our attacker machine.
+There are many ways and tools out there to accomplish this and you&amp;rsquo;re probably already familiar with some of them such as SSH port forwarding and Chisel, but today we&amp;rsquo;re going to talk about ligolo-ng, developed by Nicolas Chatelain.</description>
+      
+    </item>
+    
+    <item>
+      <title>HackTheBox Sauna Write-Up: Active Directory 101</title>
+      <link>https://arth0s.tech/posts/htb-sauna/</link>
+      <pubDate>Fri, 08 Sep 2023 13:49:35 +0300</pubDate>
+      
+      <guid>https://arth0s.tech/posts/htb-sauna/</guid>
+      
+      <description>Sauna is an easy HackTheBox machine which I did as part of the Active Directory 101 track. It tests your skills for AD enumeration and attacks, you’ll have to perform an AS-REP roasting attack and hunt for credentials, and be familiar with tools such as BloodHound and Mimikatz.
+Enumeration We&amp;rsquo;ll start as always by scanning the machine to find open ports and then doing more thorough scans on those.</description>
+      
+    </item>
+    
+    <item>
+      <title>HackTheBox MonitorsTwo Write-Up</title>
+      <link>https://arth0s.tech/posts/htb-monitorstwo/</link>
+      <pubDate>Sat, 02 Sep 2023 14:32:25 +0300</pubDate>
+      
+      <guid>https://arth0s.tech/posts/htb-monitorstwo/</guid>
+      
+      <description>MonitorsTwo is an easy HackTheBox machine that tests your ability to enumerate, find and run applicable exploits and escape a container.
+Enumeration As usual, we&amp;rsquo;ll begin with an nmap scan. I like to first find out which ports are open and then run a more aggressive scan to find out additional information about them.
+nmap -sCV -p22,80 10.10.11.211
+We have SSH and HTTP open on ports 22 and 80.</description>
+      
+    </item>
+    
+    <item>
+      <title>HackTheBox Forest Write-Up: Active Directory 101</title>
+      <link>https://arth0s.tech/posts/htb-forest/</link>
+      <pubDate>Wed, 26 Jul 2023 23:45:25 +0300</pubDate>
+      
+      <guid>https://arth0s.tech/posts/htb-forest/</guid>
+      
+      <description>Forest is an easy HackTheBox machine which I did as part of the Active Directory 101 track.
+It requires that you&amp;rsquo;re familiar with SMB enumeration, hash cracking, AS-REP roasting, basic AD enumeration and some Impacket scripts.
+Enumeration I started with a basic nmap scan first just to see which ports are open and then moved on to enumerating those specifically with the following command:
+nmap -Pn -sCV -p53,88,135,139,389,445,464,593,636,3268,3269 10.10.10.161</description>
+      
+    </item>
+    
+    <item>
+      <title>HackTheBox Inject Write-Up</title>
+      <link>https://arth0s.tech/posts/htb-inject/</link>
+      <pubDate>Sat, 08 Jul 2023 09:45:12 +0300</pubDate>
+      
+      <guid>https://arth0s.tech/posts/htb-inject/</guid>
+      
+      <description>Inject is an easy HackTheBox machine which was just retired. It tests your ability to exploit a web application vulnerable to File Inclusion, use that to explore the file system via directory traversal, gain enough information to receive remote code execution and then escalate your privileges using what you find on the system.
+Enumeration We&amp;rsquo;ll begin with a simple nmap scan and then enumerate the ports it finds more thoroughly.</description>
+      
+    </item>
+    
+    <item>
+      <title>TryHackMe Brute It CTF Write-Up</title>
+      <link>https://arth0s.tech/posts/thm-bruteit/</link>
+      <pubDate>Mon, 05 Jun 2023 11:07:55 +0300</pubDate>
+      
+      <guid>https://arth0s.tech/posts/thm-bruteit/</guid>
+      
+      <description>In this write-up I will go through the steps needed to complete the Brute It CTF on TryHackMe by ReddyyZ.
+It&amp;rsquo;s an easy room, where you need to know how to use nmap, gobuster, hydra, and basic knowledge of RSA keys and Linux privilege escalation.
+Enumeration We&amp;rsquo;ll start this challenge with an nmap scan which will usually be our first action.
+We don&amp;rsquo;t get any open ports unless we turn off host discovery with the -Pn flag.</description>
+      
+    </item>
+    
+    <item>
+      <title>TryHackMe RootMe CTF Write-Up</title>
+      <link>https://arth0s.tech/posts/thm-rootme/</link>
+      <pubDate>Mon, 08 May 2023 11:09:26 +0300</pubDate>
+      
+      <guid>https://arth0s.tech/posts/thm-rootme/</guid>
+      
+      <description>In this write-up I will go through the steps needed to complete the RootMe CTF for beginners on TryHackMe by ReddyyZ.
+It&amp;rsquo;s a very beginner-friendly challenge, you only need some knowledge of reverse shells and basic Linux Privilege escalation.
+First, we&amp;rsquo;re going to start by running a thorough nmap scan.
+Technically, you will get the answers required without going as far as scanning all ports, but we should follow a consistent and thorough methodology.</description>
+      
+    </item>
+    
+    <item>
+      <title>TryHackMe Linux Privilege Escalation Capstone Write-Up</title>
+      <link>https://arth0s.tech/posts/thm-linux-privesc-capstone/</link>
+      <pubDate>Sun, 30 Apr 2023 11:09:58 +0300</pubDate>
+      
+      <guid>https://arth0s.tech/posts/thm-linux-privesc-capstone/</guid>
+      
+      <description>In this write-up I will go through the steps needed to complete the Linux PrivEsc Capstone at the end of the Linux Privilege Escalation room on TryHackMe by tryhackme and 1337rce.
+You shouldn&amp;rsquo;t have any issues with this challenge if you&amp;rsquo;ve completed the room up to this point. I personally chose to make a cheatsheet with all of the commands presented throughout the room and go through them methodically to look for vulnerabilities to exploit.</description>
+      
+    </item>
+    
+    <item>
+      <title>TryHackMe Net Sec Challenge Write-Up</title>
+      <link>https://arth0s.tech/posts/thm-netsec-challenge/</link>
+      <pubDate>Sun, 23 Apr 2023 11:10:30 +0300</pubDate>
+      
+      <guid>https://arth0s.tech/posts/thm-netsec-challenge/</guid>
+      
+      <description>In this write-up I will go through the steps needed to complete the Net Sec Challenge room on TryHackMe by tryhackme and strategos.
+This room lets you practice all the skills you should have picked up if you&amp;rsquo;ve gone through the Network Security Module.
+As the introduction says, all the questions can be solved using nmap, telnet and hydra.
+Let&amp;rsquo;s begin by performing an nmap service scan of all ports.</description>
+      
+    </item>
+    
+    <item>
+      <title>TryHackMe Vulnerability Capstone Write-Up</title>
+      <link>https://arth0s.tech/posts/thm-vulnerability-capstone/</link>
+      <pubDate>Tue, 28 Mar 2023 11:11:17 +0300</pubDate>
+      
+      <guid>https://arth0s.tech/posts/thm-vulnerability-capstone/</guid>
+      
+      <description>In this write-up I will go through the steps needed to complete Vulnerability Capstone challenge room on TryHackMe by tryhackme and cmnatic.
+It&amp;rsquo;s not a hard room if you&amp;rsquo;ve completed the Vulnerability Research module or already have prior knowledge of how to find and exploit vulnerabilities.
+Once we deploy the vulnerable machine in Task 2 and give it some time to boot, we can start by performing a simple nmap scan to gather some information about open ports and any services running on the machine.</description>
+      
+    </item>
+    
+    <item>
+      <title>TryHackMe Web Enumeration Write-up</title>
+      <link>https://arth0s.tech/posts/thm-web-enumeration/</link>
+      <pubDate>Tue, 18 May 2021 11:11:52 +0300</pubDate>
+      
+      <guid>https://arth0s.tech/posts/thm-web-enumeration/</guid>
+      
+      <description>In this write-up I will go through the steps needed to complete the challenges in the Web Enumeration room on TryHackMe by ben, cmnatic, and Nameless0ne.
+It&amp;rsquo;s an easy room, all the theory you&amp;rsquo;ll need is laid out very thoroughly by the creators, but in case you do get stuck, let&amp;rsquo;s go through the steps together.
+We come to our first machine in task 6. We&amp;rsquo;ll be using Gobuster for this one.</description>
+      
+    </item>
+    
+    <item>
+      <title>GitHub Projects</title>
+      <link>https://arth0s.tech/pages/projects/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://arth0s.tech/pages/projects/</guid>
+      
+      <description>Practice ADCS Domain Escalation Introductory guide where we will configure our own Windows Server with a Certificate Authority manually and with the help of PowerShell, and subsequently exploit Active Directory Certificate Services with Certipy. Based on the white paper Certified Pre-Owned. Covers ESC1, ESC2, ESC3, ESC4 and ESC7.
+Bash script for AD network scanning with Nmap This is a script I put together to deal with scanning an Active Directory environment with Nmap after going through the Active Directory Enumeration &amp;amp; Attacks module on HackTheBox.</description>
+      
+    </item>
+    
+  </channel>
+</rss>

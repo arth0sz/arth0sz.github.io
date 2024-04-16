@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en-gb"><head><meta charset="utf-8">
+<meta http-equiv="content-type" content="text/html">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title itemprop="name">HackTheBox Sauna Write-Up: Active Directory 101 | arth0s&#39; blog</title>
+<meta property="og:title" content="HackTheBox Sauna Write-Up: Active Directory 101 | arth0s&#39; blog" />
+<meta name="twitter:title" content="HackTheBox Sauna Write-Up: Active Directory 101 | arth0s&#39; blog" />
+<meta itemprop="name" content="HackTheBox Sauna Write-Up: Active Directory 101 | arth0s&#39; blog" />
+<meta name="application-name" content="HackTheBox Sauna Write-Up: Active Directory 101 | arth0s&#39; blog" />
+<meta property="og:site_name" content="Awesome hugo blog" />
+
+<meta name="description" content="Minimal Hugo blog theme with light and dark mode support">
+<meta itemprop="description" content="Minimal Hugo blog theme with light and dark mode support" />
+<meta property="og:description" content="Minimal Hugo blog theme with light and dark mode support" />
+<meta name="twitter:description" content="Minimal Hugo blog theme with light and dark mode support" />
+
+<meta property="og:locale" content="en-gb" />
+<meta name="language" content="en-gb" />
+
+  <link rel="alternate" hreflang="en-gb" href="https://arth0s.tech/posts/htb-sauna/" title="English" />
+
+
+
+  <meta itemprop="image" content="https://arth0s.tech/" />
+  <meta property="og:image" content="https://arth0s.tech/" />
+  <meta name="twitter:image" content="https://arth0s.tech/" />
+  <meta name="twitter:image:src" content="https://arth0s.tech/" />
+
+
+
+
+    
+    
+    
+
+    <meta property="og:type" content="article" />
+    <meta property="og:article:published_time" content=2023-09-08T13:49:35&#43;0300 />
+    <meta property="article:published_time" content=2023-09-08T13:49:35&#43;0300 />
+
+    
+
+    
+
+    <script defer type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "Article",
+        "headline": "HackTheBox Sauna Write-Up: Active Directory 101",
+        "author": {
+        "@type": "Person",
+        "name": ""
+        },
+        "datePublished": "2023-09-08",
+        "description": "",
+        "wordCount":  879 ,
+        "mainEntityOfPage": "True",
+        "dateModified": "2023-09-08",
+        "image": {
+        "@type": "imageObject",
+        "url": ""
+        },
+        "publisher": {
+        "@type": "Organization",
+        "name": "arth0s\u0027 blog"
+        }
+    }
+    </script>
+
+
+<meta name="generator" content="Hugo 0.124.1">
+
+    
+
+    <link rel="canonical" href="https://arth0s.tech/posts/htb-sauna/">
+    <link href="/style.min.17edc7f00ac28173d15808dea8024bba9bc6617193902bee27ad9ef668880304.css" rel="stylesheet">
+    <link href="/code-highlight.min.706d31975fec544a864cb7f0d847a73ea55ca1df91bf495fd12a177138d807cf.css" rel="stylesheet">
+
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg">
+    <link rel="shortcut icon" href="/favicon.ico">
+
+
+
+
+<link rel="manifest" href="https://arth0s.tech/site.webmanifest">
+
+<meta name="msapplication-config" content="/browserconfig.xml">
+<meta name="msapplication-TileColor" content="#2d89ef">
+<meta name="theme-color" content="#434648">
+
+    
+    <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg">
+
+    
+    </head>
+<body data-theme = "dark" class="notransition">
+
+<script src="/js/theme.min.8961c317c5b88b953fe27525839672c9343f1058ab044696ca225656c8ba2ab0.js" integrity="sha256-iWHDF8W4i5U/4nUlg5ZyyTQ/EFirBEaWyiJWVsi6KrA="></script>
+
+<div class="navbar" role="navigation">
+    <nav class="menu" aria-label="Main Navigation">
+        <a href="https://arth0s.tech/" class="logo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" 
+viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" 
+stroke-linejoin="round" class="feather feather-home">
+<title>Home</title>
+<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+<polyline points="9 22 9 12 15 12 15 22"></polyline>
+</svg>
+        </a>
+        <input type="checkbox" id="menu-trigger" class="menu-trigger" />
+        <label for="menu-trigger">
+            <span class="menu-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" stroke="currentColor" fill="none" viewBox="0 0 14 14"><title>Menu</title><path stroke-linecap="round" stroke-linejoin="round" d="M10.595 7L3.40726 7"></path><path stroke-linecap="round" stroke-linejoin="round" d="M10.5096 3.51488L3.49301 3.51488"></path><path stroke-linecap="round" stroke-linejoin="round" d="M10.5096 10.4851H3.49301"></path><path stroke-linecap="round" stroke-linejoin="round" d="M0.5 12.5V1.5C0.5 0.947715 0.947715 0.5 1.5 0.5H12.5C13.0523 0.5 13.5 0.947715 13.5 1.5V12.5C13.5 13.0523 13.0523 13.5 12.5 13.5H1.5C0.947715 13.5 0.5 13.0523 0.5 12.5Z"></path></svg>
+            </span>
+        </label>
+
+        <div class="trigger">
+            <ul class="trigger-container">
+                
+                
+                <li>
+                    <a class="menu-link " href="/">
+                        Home
+                    </a>
+                    
+                </li>
+                
+                <li>
+                    <a class="menu-link active" href="/posts/">
+                        Posts
+                    </a>
+                    
+                </li>
+                
+                <li>
+                    <a class="menu-link " href="/pages/projects/">
+                        Projects
+                    </a>
+                    
+                </li>
+                
+                <li class="menu-separator">
+                    <span>|</span>
+                </li>
+                
+                
+            </ul>
+            <a id="mode" href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mode-sunny" width="21" height="21" viewBox="0 0 14 14" stroke-width="1">
+<title>LIGHT</title><g><circle cx="7" cy="7" r="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></circle><line x1="7" y1="0.5" x2="7" y2="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="2.4" y1="2.4" x2="3.82" y2="3.82" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="0.5" y1="7" x2="2.5" y2="7" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="2.4" y1="11.6" x2="3.82" y2="10.18" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="7" y1="13.5" x2="7" y2="11.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="11.6" y1="11.6" x2="10.18" y2="10.18" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="13.5" y1="7" x2="11.5" y2="7" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="11.6" y1="2.4" x2="10.18" y2="3.82" fill="none" stroke-linecap="round" stroke-linejoin="round"></line></g></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="mode-moon" width="21" height="21" viewBox="0 0 14 14" stroke-width="1">
+<title>DARK</title><g><circle cx="7" cy="7" r="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></circle><line x1="7" y1="0.5" x2="7" y2="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="2.4" y1="2.4" x2="3.82" y2="3.82" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="0.5" y1="7" x2="2.5" y2="7" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="2.4" y1="11.6" x2="3.82" y2="10.18" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="7" y1="13.5" x2="7" y2="11.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="11.6" y1="11.6" x2="10.18" y2="10.18" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="13.5" y1="7" x2="11.5" y2="7" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="11.6" y1="2.4" x2="10.18" y2="3.82" fill="none" stroke-linecap="round" stroke-linejoin="round"></line></g></svg>
+            </a>
+        </div>
+    </nav>
+</div>
+
+<div class="wrapper post">
+    <main class="page-content" aria-label="Content">
+        <article>
+            <header class="header">
+                <h1 class="header-title">HackTheBox Sauna Write-Up: Active Directory 101</h1>
+                
+                
+                <div class="post-meta">
+                    <time datetime="2023-09-08T13:49:35&#43;03:00" itemprop="datePublished"> 8 Sep 2023 </time>
+                </div>
+                
+            </header>
+            
+    
+    <details class="toc" ZgotmplZ>
+        <summary><b>Table of Contents</b></summary>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#enumeration">Enumeration</a>
+      <ul>
+        <li><a href="#smb---port-445">SMB - Port 445</a></li>
+        <li><a href="#website-on-port-80">Website on port 80</a></li>
+      </ul>
+    </li>
+    <li><a href="#user-flag">User Flag</a></li>
+    <li><a href="#pivoting-to-a-different-user">Pivoting to a Different User</a></li>
+    <li><a href="#root-flag">Root Flag</a>
+      <ul>
+        <li><a href="#dcsync-with-mimikatz">DCSync with Mimikatz</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </details>
+            <div class="page-content">
+                <p><img src="/posts/htb-sauna/1.png"></p>
+<p>Sauna is an easy <a href="https://hackthebox.com/">HackTheBox</a> machine which I did as part of the <a href="https://app.hackthebox.com/tracks/Active-Directory-101">Active Directory 101</a> track. It tests your skills for AD enumeration and attacks, you’ll have to perform an AS-REP roasting attack and hunt for credentials, and be familiar with tools such as BloodHound and Mimikatz.</p>
+<h2 id="enumeration">Enumeration</h2>
+<p>We&rsquo;ll start as always by scanning the machine to find open ports and then doing more thorough scans on those.</p>
+<p><code>nmap -Pn -sCV -p53,80,88,135,139,389,445,464,593,636,3268,3269 10.10.10.175</code></p>
+<p><img src="/posts/htb-sauna/2.png"></p>
+<p>Nothing unexpected in the scan, we’re dealing with Active Directory after all. We have SMB, LDAP, Kerberos at port 88, and a website on port 80.</p>
+<p><img src="/posts/htb-sauna/3.png"></p>
+<p>Just as was the case with the Forest machine, some of our SMB attack vectors are cut off, but there&rsquo;s no harm in trying.</p>
+<h3 id="smb---port-445">SMB - Port 445</h3>
+<p>We get successful anonymous login with <strong>smbclient</strong>, but no shares are listed.</p>
+<p><img src="/posts/htb-sauna/4.png"></p>
+<p>Attempting enumeration with <strong>Enum4linux</strong> doesn’t give us more than the domain name and SID, no usernames.</p>
+<p>SMB might be a full-on dead end as predicted.</p>
+<p>We do have a website on port 80 though, so let&rsquo;s move on.</p>
+<h3 id="website-on-port-80">Website on port 80</h3>
+<p><img src="/posts/htb-sauna/5.png"></p>
+<p>We find the website of a bank aiming to take all of our money.</p>
+<p><img src="/posts/htb-sauna/6.png"></p>
+<p>By exploring the website as a regular we visitor, we find employee names on the About Us page in the Meet the Team section at the bottom.</p>
+<p>Fergus Smith
+Shaun Coins
+Hugo Bear
+Bowie Taylor
+Sophie Driver
+Steven Kerb</p>
+<p>We&rsquo;re going to use a tool called <a href="https://github.com/benbusby/namebuster">Namebuster</a> that generates a list of possible common username permutations. Interestingly enough, it was originally meant to be used specifically for this box. It&rsquo;s not the only tool of its kind, of course, there&rsquo;s others such as <a href="https://github.com/urbanadventurer/username-anarchy">Username Anarchy</a>,</p>
+<p><code>namebuster &quot;Fergus Smith, Shaun Coins, Hugo Bear, Bowie Taylor, Sophie Driver, Steven Kerb&quot;</code></p>
+<p>We end up with a list of 1296 potential usernames. We need to narrow it down so we&rsquo;re going to use <strong>kerbrute</strong> for username enumeration against Kerberos.</p>
+<p><img src="/posts/htb-sauna/7.png"></p>
+<p>And we have a valid username which is <em><a href="mailto:fsmith@egotistical-bank.local">fsmith@egotistical-bank.local</a></em>. We can now use that to perform an AS-REP roasting attack which only requires a username to work.</p>
+<h2 id="user-flag">User Flag</h2>
+<p>The attack is used to retrieve domain users who have &ldquo;Do not require Kerberos pre-authentication&rdquo; set and ask for their TGTs without needing to know their password.</p>
+<p><code>GetNPUsers.py -dc-ip 10.10.10.175 -request &quot;egotistical-bank.local/fsmith -format hashcat</code></p>
+<p><img src="/posts/htb-sauna/8.png"></p>
+<p>Now that we have the user&rsquo;s TGT, we can take it offline and crack it with <strong>Hashcat</strong> and mode 18200, which gets us the user&rsquo;s password.</p>
+<p><img src="/posts/htb-sauna/9.png"></p>
+<p>Next we can try using the obtained credentials to get a shell on the target with Evil-WinRM and we are successful, which lets us obtain the user flag.</p>
+<p><img src="/posts/htb-sauna/10.png"></p>
+<h2 id="pivoting-to-a-different-user">Pivoting to a Different User</h2>
+<p>Next we&rsquo;re going to upload <strong>SharpHound</strong> to the machine using the functionality built within Evil-WinRM so we can collect information about the domain.</p>
+<p><code>upload /root/Downloads/HTB/Sauna/SharpHound.exe C:\Users\FSmith\Desktop\SharpHound.exe</code></p>
+<p><img src="/posts/htb-sauna/11.png"></p>
+<p>Interestingly enough, after downloading the resulting zip file and importing it into BloodHound, it doesn&rsquo;t reveal anything particularly useful to us, so it&rsquo;s time for some manual enumeration.</p>
+<p>I like to start with some good old credential hunting, you can follow <a href="https://juggernaut-sec.com/password-hunting/">this article</a> to get familiar with different ways to look for credentials on Windows machines.</p>
+<p>A broad search in the registry produces a lot of output but it does give us the result we need.</p>
+<p><code>reg query HKLM /f password /t REG_SZ /s</code></p>
+<p>We can obtain that result quicker by checking common places in the registry where credentials may be stored.</p>
+<p>Once such place is the winlogon registry key, which is tied to a setting in Windows called <strong>Autologon</strong>.</p>
+<blockquote>
+<p>Autologon enables you to easily configure Windows’ built-in autologon mechanism. Instead of waiting for a user to enter their name and password, Windows uses the credentials you enter with Autologon to log on the specified user automatically.</p>
+</blockquote>
+<p><code>reg query &quot;HKLM\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon&quot;</code></p>
+<p>We now have both a username and a password.</p>
+<p><img src="/posts/htb-sauna/12.png"></p>
+<p><img src="/posts/htb-sauna/13.png"></p>
+<p>If we attempt to login with svc_loanmanager, however, we are unsuccessful. This is where BloodHound comes to the rescue. If we check what we&rsquo;ve obtained, we will find the proper username we need to utilise.</p>
+<p><img src="/posts/htb-sauna/14.png"></p>
+<p>Once again, we can obtain a shell using Evil-WinRM.</p>
+<p><img src="/posts/htb-sauna/15.png"></p>
+<h2 id="root-flag">Root Flag</h2>
+<p>Since we have credentials for what seems to be a service account with potentially higher privileges, we can repeat the enumeration with SharpHound and when we use the filter for &ldquo;Reachable High Value Targets&rdquo; in BloodHound, we will find that the account has DCSync rights to the domain controller.</p>
+<p><img src="/posts/htb-sauna/16.png"></p>
+<h3 id="dcsync-with-mimikatz">DCSync with Mimikatz</h3>
+<p>We can upload <strong>Mimikatz</strong> to the machine to perform the attack.</p>
+<p>We need to be careful when running Mimikatz via a PS session. We need to utilise a one-liner and encase separate commands in quotation marks, otherwise the screen will fill with the initial start-up of &ldquo;mimikatz #&rdquo; and we&rsquo;ll have to kill our session to stop it.</p>
+<p><code>.\mimikatz &quot;lsadump:: dcsync /domain:EGOTISTICAL-BANK.LOCAL /user:administrator</code></p>
+<p><img src="/posts/htb-sauna/18.png"></p>
+<p>After utilising the <code>lsadump::dcsync</code> command to retrieve domain secrets, we obtain the NTLM hash of the administrator account.</p>
+<p><img src="/posts/htb-sauna/17.png"></p>
+<p>Now we can perform a Pass-the-Hash attack with Evil-WinRM to log in as administrator and obtain the root flag.</p>
+<p><img src="/posts/htb-sauna/19.png"></p>
+<p>Thank you to the creator of this box — <a href="https://app.hackthebox.com/users/94858">egotisticalSW</a>. It’s a very fun Active Directory box to test your enumeration and password hunting skills, knowledge of common AD attacks and tools.</p>
+<p>If you made it this far, thank you for reading!</p>
+
+            </div>
+        </article></main>
+</div>
+<footer class="footer">
+    <span class="footer_item"> </span>
+    &nbsp;
+
+    <div class="footer_social-icons">
+<a href="https://github.com/arth0sz" target="_blank" rel="noopener noreferrer me"
+    title="Github">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path
+        d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+    </path>
+</svg>
+</a>
+<a href="https://app.hackthebox.com/profile/602818" target="_blank" rel="noopener noreferrer me"
+    title="Hackthebox">
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+    preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+    <g>
+        <path
+            d="M11.9959.0008a1.1187 1.1187 0 00-.057.002.8993.8993 0 00-.2358.0498.9067.9067 0 00-.1652.079L1.9357 5.675a.889.889 0 00-.4444.7699c0 .006.0004.0128.0006.0192-.0002.007 0 .014 0 .0212V17.556a.889.889 0 00.469.7837l9.5983 5.5416c.018.0102.036.0197.054.0287v.002a.8568.8568 0 00.083.0348c0 .001.01.003.012.004.028.01.056.0177.085.0245.01.001.011.003.016.004.028.006.057.0112.086.0146 0 .0005.01.0009.014.001.03.003.061.005.091.005s.061-.002.091-.005c0-.0005.01-.0009.014-.001a.6831.6831 0 00.086-.0146c.01-.001.011-.002.016-.004a.9404.9404 0 00.085-.0245c0-.001.01-.003.012-.004a.8818.8818 0 00.083-.0347v-.002a1.086 1.086 0 00.054-.0287l9.5986-5.5416a.889.889 0 00.4689-.7837V6.4786c0-.009-.0006-.0172-.0008-.0258h.0003v-.008a.8886.8886 0 00-.3117-.6755c-.01-.008-.019-.0162-.029-.0241 0-.002-.01-.005-.01-.007a.8988.8988 0 00-.1074-.0705L12.4533.1267a.8872.8872 0 00-.4646-.1266zm.01 2.2523c.072 0 .1443.0187.209.056l6.5366 3.774c.2789.161.2789.5633 0 .7243l-6.5367 3.774a.4182.4182 0 01-.4182 0L5.26 6.8074c-.2788-.1609-.2789-.5633 0-.7243l6.5368-3.774a.4193.4193 0 01.209-.056zm-8.0801 6.458a.4145.4145 0 01.215.0565l6.524 3.7666a.417.417 0 01.2086.3612v7.5326c0 .3212-.3477.522-.626.3613l-6.5237-3.7666a.4172.4172 0 01-.2086-.3613V9.1288c0-.2408.1955-.414.4107-.4177zm16.1599 0c.215.004.4107.1768.4107.4177v7.5325c0 .149-.08.2868-.2087.3614l-6.5239 3.7666c-.278.1606-.6258-.0401-.6258-.3614v-7.5325c0-.149.08-.2867.2086-.3613l6.5238-3.7666a.415.415 0 01.2152-.0565z">
+        </path>
+    </g>
+</svg>
+</a>
+<a href="https://arth0s.medium.com" target="_blank" rel="noopener noreferrer me"
+    title="Medium">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="currentColor">
+<path 
+d="M180.5 74.3C80.8 74.3 0 155.6 0 256S80.8 437.7 180.5 437.7 361 356.4 361 256 280.2 74.3 180.5 74.3zm288.3 10.6c-49.8 0-90.2 76.6-90.2 171.1s40.4 171.1 90.3 171.1 90.3-76.6 90.3-171.1H559C559 161.5 518.6 84.9 468.8 84.9zm139.5 17.8c-17.5 0-31.7 68.6-31.7 153.3s14.2 153.3 31.7 153.3S640 340.6 640 256C640 171.4 625.8 102.7 608.3 102.7z"/>
+</svg>
+</a>
+</div>
+    <small class="footer_copyright">
+        © 2024 
+    </small>
+</footer><a href="#" title="Go to top" id="totop">
+    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" stroke="currentColor" viewBox="0 96 960 960">
+    <path d="M283 704.739 234.261 656 480 410.261 725.739 656 677 704.739l-197-197-197 197Z"/>
+</svg>
+
+</a>
+
+
+    
+
+
+
+
+    
+    
+        
+    
+
+    
+    
+        
+    
+
+
+
+    
+    <script src="https://arth0s.tech/js/main.min.35f435a5d8eac613c52daa28d8af544a4512337d3e95236e4a4978417b8dcb2f.js" integrity="sha256-NfQ1pdjqxhPFLaoo2K9USkUSM30&#43;lSNuSkl4QXuNyy8="></script>
+
+    
+
+</body>
+</html>

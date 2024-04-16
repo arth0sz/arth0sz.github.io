@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en-gb"><head><meta charset="utf-8">
+<meta http-equiv="content-type" content="text/html">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title itemprop="name">TryHackMe Brute It CTF Write-Up | arth0s&#39; blog</title>
+<meta property="og:title" content="TryHackMe Brute It CTF Write-Up | arth0s&#39; blog" />
+<meta name="twitter:title" content="TryHackMe Brute It CTF Write-Up | arth0s&#39; blog" />
+<meta itemprop="name" content="TryHackMe Brute It CTF Write-Up | arth0s&#39; blog" />
+<meta name="application-name" content="TryHackMe Brute It CTF Write-Up | arth0s&#39; blog" />
+<meta property="og:site_name" content="Awesome hugo blog" />
+
+<meta name="description" content="Minimal Hugo blog theme with light and dark mode support">
+<meta itemprop="description" content="Minimal Hugo blog theme with light and dark mode support" />
+<meta property="og:description" content="Minimal Hugo blog theme with light and dark mode support" />
+<meta name="twitter:description" content="Minimal Hugo blog theme with light and dark mode support" />
+
+<meta property="og:locale" content="en-gb" />
+<meta name="language" content="en-gb" />
+
+  <link rel="alternate" hreflang="en-gb" href="https://arth0s.tech/posts/thm-bruteit/" title="English" />
+
+
+
+  <meta itemprop="image" content="https://arth0s.tech/" />
+  <meta property="og:image" content="https://arth0s.tech/" />
+  <meta name="twitter:image" content="https://arth0s.tech/" />
+  <meta name="twitter:image:src" content="https://arth0s.tech/" />
+
+
+
+
+    
+    
+    
+
+    <meta property="og:type" content="article" />
+    <meta property="og:article:published_time" content=2023-06-05T11:07:55&#43;0300 />
+    <meta property="article:published_time" content=2023-06-05T11:07:55&#43;0300 />
+
+    
+
+    
+
+    <script defer type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "Article",
+        "headline": "TryHackMe Brute It CTF Write-Up",
+        "author": {
+        "@type": "Person",
+        "name": ""
+        },
+        "datePublished": "2023-06-05",
+        "description": "",
+        "wordCount":  735 ,
+        "mainEntityOfPage": "True",
+        "dateModified": "2023-06-05",
+        "image": {
+        "@type": "imageObject",
+        "url": ""
+        },
+        "publisher": {
+        "@type": "Organization",
+        "name": "arth0s\u0027 blog"
+        }
+    }
+    </script>
+
+
+<meta name="generator" content="Hugo 0.124.1">
+
+    
+
+    <link rel="canonical" href="https://arth0s.tech/posts/thm-bruteit/">
+    <link href="/style.min.17edc7f00ac28173d15808dea8024bba9bc6617193902bee27ad9ef668880304.css" rel="stylesheet">
+    <link href="/code-highlight.min.706d31975fec544a864cb7f0d847a73ea55ca1df91bf495fd12a177138d807cf.css" rel="stylesheet">
+
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg">
+    <link rel="shortcut icon" href="/favicon.ico">
+
+
+
+
+<link rel="manifest" href="https://arth0s.tech/site.webmanifest">
+
+<meta name="msapplication-config" content="/browserconfig.xml">
+<meta name="msapplication-TileColor" content="#2d89ef">
+<meta name="theme-color" content="#434648">
+
+    
+    <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg">
+
+    
+    </head>
+<body data-theme = "dark" class="notransition">
+
+<script src="/js/theme.min.8961c317c5b88b953fe27525839672c9343f1058ab044696ca225656c8ba2ab0.js" integrity="sha256-iWHDF8W4i5U/4nUlg5ZyyTQ/EFirBEaWyiJWVsi6KrA="></script>
+
+<div class="navbar" role="navigation">
+    <nav class="menu" aria-label="Main Navigation">
+        <a href="https://arth0s.tech/" class="logo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" 
+viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" 
+stroke-linejoin="round" class="feather feather-home">
+<title>Home</title>
+<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+<polyline points="9 22 9 12 15 12 15 22"></polyline>
+</svg>
+        </a>
+        <input type="checkbox" id="menu-trigger" class="menu-trigger" />
+        <label for="menu-trigger">
+            <span class="menu-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" stroke="currentColor" fill="none" viewBox="0 0 14 14"><title>Menu</title><path stroke-linecap="round" stroke-linejoin="round" d="M10.595 7L3.40726 7"></path><path stroke-linecap="round" stroke-linejoin="round" d="M10.5096 3.51488L3.49301 3.51488"></path><path stroke-linecap="round" stroke-linejoin="round" d="M10.5096 10.4851H3.49301"></path><path stroke-linecap="round" stroke-linejoin="round" d="M0.5 12.5V1.5C0.5 0.947715 0.947715 0.5 1.5 0.5H12.5C13.0523 0.5 13.5 0.947715 13.5 1.5V12.5C13.5 13.0523 13.0523 13.5 12.5 13.5H1.5C0.947715 13.5 0.5 13.0523 0.5 12.5Z"></path></svg>
+            </span>
+        </label>
+
+        <div class="trigger">
+            <ul class="trigger-container">
+                
+                
+                <li>
+                    <a class="menu-link " href="/">
+                        Home
+                    </a>
+                    
+                </li>
+                
+                <li>
+                    <a class="menu-link active" href="/posts/">
+                        Posts
+                    </a>
+                    
+                </li>
+                
+                <li>
+                    <a class="menu-link " href="/pages/projects/">
+                        Projects
+                    </a>
+                    
+                </li>
+                
+                <li class="menu-separator">
+                    <span>|</span>
+                </li>
+                
+                
+            </ul>
+            <a id="mode" href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mode-sunny" width="21" height="21" viewBox="0 0 14 14" stroke-width="1">
+<title>LIGHT</title><g><circle cx="7" cy="7" r="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></circle><line x1="7" y1="0.5" x2="7" y2="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="2.4" y1="2.4" x2="3.82" y2="3.82" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="0.5" y1="7" x2="2.5" y2="7" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="2.4" y1="11.6" x2="3.82" y2="10.18" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="7" y1="13.5" x2="7" y2="11.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="11.6" y1="11.6" x2="10.18" y2="10.18" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="13.5" y1="7" x2="11.5" y2="7" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="11.6" y1="2.4" x2="10.18" y2="3.82" fill="none" stroke-linecap="round" stroke-linejoin="round"></line></g></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="mode-moon" width="21" height="21" viewBox="0 0 14 14" stroke-width="1">
+<title>DARK</title><g><circle cx="7" cy="7" r="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></circle><line x1="7" y1="0.5" x2="7" y2="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="2.4" y1="2.4" x2="3.82" y2="3.82" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="0.5" y1="7" x2="2.5" y2="7" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="2.4" y1="11.6" x2="3.82" y2="10.18" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="7" y1="13.5" x2="7" y2="11.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="11.6" y1="11.6" x2="10.18" y2="10.18" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="13.5" y1="7" x2="11.5" y2="7" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="11.6" y1="2.4" x2="10.18" y2="3.82" fill="none" stroke-linecap="round" stroke-linejoin="round"></line></g></svg>
+            </a>
+        </div>
+    </nav>
+</div>
+
+<div class="wrapper post">
+    <main class="page-content" aria-label="Content">
+        <article>
+            <header class="header">
+                <h1 class="header-title">TryHackMe Brute It CTF Write-Up</h1>
+                
+                
+                <div class="post-meta">
+                    <time datetime="2023-06-05T11:07:55&#43;03:00" itemprop="datePublished"> 5 Jun 2023 </time>
+                </div>
+                
+            </header>
+            
+    
+    <details class="toc" ZgotmplZ>
+        <summary><b>Table of Contents</b></summary>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#enumeration">Enumeration</a>
+      <ul>
+        <li><a href="#login-portal">Login Portal</a></li>
+        <li><a href="#brute-force-attack">Brute-force attack</a></li>
+      </ul>
+    </li>
+    <li><a href="#user-flag">User flag</a></li>
+    <li><a href="#privilege-escalation---root-flag">Privilege Escalation - Root Flag</a></li>
+  </ul>
+</nav>
+    </details>
+            <div class="page-content">
+                <p>In this write-up I will go through the steps needed to complete the <a href="https://tryhackme.com/room/bruteit">Brute It</a> CTF on TryHackMe by <a href="https://tryhackme.com/p/ReddyyZ">ReddyyZ</a>.</p>
+<p>It&rsquo;s an easy room, where you need to know how to use nmap, gobuster, hydra, and basic knowledge of RSA keys and Linux privilege escalation.</p>
+<hr>
+<h2 id="enumeration">Enumeration</h2>
+<p>We&rsquo;ll start this challenge with an nmap scan which will usually be our first action.</p>
+<p>We don&rsquo;t get any open ports unless we turn off host discovery with the <code>-Pn</code> flag.</p>
+<p><img src="/posts/thm-bruteit/1.png"></p>
+<p>The results of our scan quickly let us answer the first four questions.</p>
+<p><img src="/posts/thm-bruteit/2.png"></p>
+<p>How many ports are open? <strong>2</strong></p>
+<p>What version of SSH is running? <strong>OpenSSH 7.6p1</strong></p>
+<p>What version of Apache is running? <strong>2.4.29</strong></p>
+<p>Which Linux distribution is running? <strong>Ubuntu</strong></p>
+<hr>
+<p>We only find the Apache2 default page when we put the IP in our browser.</p>
+<p>Next we&rsquo;re going to run a <code>Gobuster</code> scan with our chosen directory list in order to find any hidden directories on the website.</p>
+<p><img src="/posts/thm-bruteit/3.png"></p>
+<p>This lets us answer the next question.</p>
+<p>What is the hidden directory? <strong>/admin</strong></p>
+<p>When we go to that directory in our browser, we are faced with a simple login form. What can we learn from that? Turns out we can learn plenty.</p>
+<p><img src="/posts/thm-bruteit/4.png"></p>
+<h3 id="login-portal">Login Portal</h3>
+<p>Let&rsquo;s check the source of the page in case there&rsquo;s anything there that can help us. This should be standard practice.</p>
+<p><img src="/posts/thm-bruteit/5.png"></p>
+<p>What do you know, we have the name &ldquo;<strong>john</strong>&rdquo; which we&rsquo;ll keep in mind for later, and we find out that the username is admin. All because of a forgotten comment in the html code.</p>
+<p><img src="/posts/thm-bruteit/5.1.png"></p>
+<p>Another useful thing to note in the source code is the names of the input fields which are &ldquo;<em><strong>user</strong></em>&rdquo; and &ldquo;<em><strong>pass</strong></em>&rdquo;. If you miss that in the html, you can find those out with BurpSuite as well.</p>
+<p><img src="/posts/thm-bruteit/7.png"></p>
+<p>Let&rsquo;s enter the username admin and a random password to see what happens.</p>
+<p><img src="/posts/thm-bruteit/6.png"></p>
+<p>We get a simple error message which we can put to good use soon enough.</p>
+<h3 id="brute-force-attack">Brute-force attack</h3>
+<p>Now, we need all of the information we&rsquo;ve gathered so far in order to craft our Hydra command brute-force the login form:</p>
+<pre tabindex="0"><code>- username = admin
+- username and password input fields are called &#34;user&#34; and &#34;pass&#34;
+- error message when inputting incorrect login details = &#34;Username or password invalid&#34;
+</code></pre><p><img src="/posts/thm-bruteit/8.png"></p>
+<p>We run our newly crafted Hydra command and soon enough we have our password.</p>
+<p><img src="/posts/thm-bruteit/9.png"></p>
+<p>We can successfully use to log in as admin. There we find a web flag at the end, a message for <strong>john</strong> again, along with a link to john&rsquo;s private RSA key. Now that&rsquo;s a useful find!</p>
+<h2 id="user-flag">User flag</h2>
+<p><img src="/posts/thm-bruteit/10.png"></p>
+<p>We can follow the link to the RSA key and use wget to download it to our machine.</p>
+<p><img src="/posts/thm-bruteit/12.png"></p>
+<p>Next, we need to convert the key into a hash format that our favourite hash cracker John the Ripper can work with by using <code>ssh2john</code>.</p>
+<p><img src="/posts/thm-bruteit/13.png"></p>
+<p>Then we can run the hash file through John and receive the passphrase for the RSA key.</p>
+<p><img src="/posts/thm-bruteit/14.png"></p>
+<p>One last thing to do — we shouldn&rsquo;t forget to give the id_rsa file the proper permissions it requires. And we&rsquo;re good to go.</p>
+<p><img src="/posts/thm-bruteit/15.png"></p>
+<p>We&rsquo;re logged in as john and we can get the user flag.</p>
+<p><img src="/posts/thm-bruteit/16.png"></p>
+<h2 id="privilege-escalation---root-flag">Privilege Escalation - Root Flag</h2>
+<p>It&rsquo;s time to find a way to escalate our privileges. The easiest wins are usually binaries that we can run with sudo or that have the SUID bit set. You can look for those first or go through your list (that you hopefully have) of commands for enumeration of Linux systems in order.</p>
+<p><img src="/posts/thm-bruteit/17.png"></p>
+<p>We find that we can run the <code>cat</code> command with sudo privileges without a password. Let&rsquo;s look that up on <a href="https://gtfobins.github.io/">GTFOBins</a>.</p>
+<p>We find out that we can exploit this in order to read a file. What&rsquo;s the most useful file we can get our hands on? That&rsquo;s right, the illusive <code>/etc/shadow</code> file.</p>
+<p><img src="/posts/thm-bruteit/18.png"></p>
+<p>And now we&rsquo;ve got our hands the hash for the root password.</p>
+<p>You probably know what follows. We also need to read <code>/etc/passwd</code>.</p>
+<p><img src="/posts/thm-bruteit/19.png"></p>
+<p>Then we can create the two files we need for the unshadow command.</p>
+<p><img src="/posts/thm-bruteit/20.png"></p>
+<p><img src="/posts/thm-bruteit/21.png"></p>
+<p>This will give us a txt file that John can work with.</p>
+<p><img src="/posts/thm-bruteit/22.png"></p>
+<p>And so we’ve obtained the password for root.</p>
+<p><img src="/posts/thm-bruteit/23.png"></p>
+<p>Time to switch to that user in order to receive our final flag and complete this challenge.</p>
+<hr>
+<p>Thank you to the creator of this room! It&rsquo;s a fun challenge to test your skills in using some fundamental tools.</p>
+<p>If you made it this far, thank you for reading!</p>
+
+            </div>
+        </article></main>
+</div>
+<footer class="footer">
+    <span class="footer_item"> </span>
+    &nbsp;
+
+    <div class="footer_social-icons">
+<a href="https://github.com/arth0sz" target="_blank" rel="noopener noreferrer me"
+    title="Github">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path
+        d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+    </path>
+</svg>
+</a>
+<a href="https://app.hackthebox.com/profile/602818" target="_blank" rel="noopener noreferrer me"
+    title="Hackthebox">
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+    preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+    <g>
+        <path
+            d="M11.9959.0008a1.1187 1.1187 0 00-.057.002.8993.8993 0 00-.2358.0498.9067.9067 0 00-.1652.079L1.9357 5.675a.889.889 0 00-.4444.7699c0 .006.0004.0128.0006.0192-.0002.007 0 .014 0 .0212V17.556a.889.889 0 00.469.7837l9.5983 5.5416c.018.0102.036.0197.054.0287v.002a.8568.8568 0 00.083.0348c0 .001.01.003.012.004.028.01.056.0177.085.0245.01.001.011.003.016.004.028.006.057.0112.086.0146 0 .0005.01.0009.014.001.03.003.061.005.091.005s.061-.002.091-.005c0-.0005.01-.0009.014-.001a.6831.6831 0 00.086-.0146c.01-.001.011-.002.016-.004a.9404.9404 0 00.085-.0245c0-.001.01-.003.012-.004a.8818.8818 0 00.083-.0347v-.002a1.086 1.086 0 00.054-.0287l9.5986-5.5416a.889.889 0 00.4689-.7837V6.4786c0-.009-.0006-.0172-.0008-.0258h.0003v-.008a.8886.8886 0 00-.3117-.6755c-.01-.008-.019-.0162-.029-.0241 0-.002-.01-.005-.01-.007a.8988.8988 0 00-.1074-.0705L12.4533.1267a.8872.8872 0 00-.4646-.1266zm.01 2.2523c.072 0 .1443.0187.209.056l6.5366 3.774c.2789.161.2789.5633 0 .7243l-6.5367 3.774a.4182.4182 0 01-.4182 0L5.26 6.8074c-.2788-.1609-.2789-.5633 0-.7243l6.5368-3.774a.4193.4193 0 01.209-.056zm-8.0801 6.458a.4145.4145 0 01.215.0565l6.524 3.7666a.417.417 0 01.2086.3612v7.5326c0 .3212-.3477.522-.626.3613l-6.5237-3.7666a.4172.4172 0 01-.2086-.3613V9.1288c0-.2408.1955-.414.4107-.4177zm16.1599 0c.215.004.4107.1768.4107.4177v7.5325c0 .149-.08.2868-.2087.3614l-6.5239 3.7666c-.278.1606-.6258-.0401-.6258-.3614v-7.5325c0-.149.08-.2867.2086-.3613l6.5238-3.7666a.415.415 0 01.2152-.0565z">
+        </path>
+    </g>
+</svg>
+</a>
+<a href="https://arth0s.medium.com" target="_blank" rel="noopener noreferrer me"
+    title="Medium">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="currentColor">
+<path 
+d="M180.5 74.3C80.8 74.3 0 155.6 0 256S80.8 437.7 180.5 437.7 361 356.4 361 256 280.2 74.3 180.5 74.3zm288.3 10.6c-49.8 0-90.2 76.6-90.2 171.1s40.4 171.1 90.3 171.1 90.3-76.6 90.3-171.1H559C559 161.5 518.6 84.9 468.8 84.9zm139.5 17.8c-17.5 0-31.7 68.6-31.7 153.3s14.2 153.3 31.7 153.3S640 340.6 640 256C640 171.4 625.8 102.7 608.3 102.7z"/>
+</svg>
+</a>
+</div>
+    <small class="footer_copyright">
+        © 2024 
+    </small>
+</footer><a href="#" title="Go to top" id="totop">
+    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" stroke="currentColor" viewBox="0 96 960 960">
+    <path d="M283 704.739 234.261 656 480 410.261 725.739 656 677 704.739l-197-197-197 197Z"/>
+</svg>
+
+</a>
+
+
+    
+
+
+
+
+    
+    
+        
+    
+
+    
+    
+        
+    
+
+
+
+    
+    <script src="https://arth0s.tech/js/main.min.35f435a5d8eac613c52daa28d8af544a4512337d3e95236e4a4978417b8dcb2f.js" integrity="sha256-NfQ1pdjqxhPFLaoo2K9USkUSM30&#43;lSNuSkl4QXuNyy8="></script>
+
+    
+
+</body>
+</html>
