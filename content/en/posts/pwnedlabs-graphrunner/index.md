@@ -1,6 +1,6 @@
 +++
 title = 'Pwned Labs Write-Up - Loot Exchange, Teams and SharePoint with GraphRunner'
-date = 2024-04-20T15:31:41+03:00
+date = 2024-04-21T15:31:41+03:00
 draft = false
 +++
 
@@ -10,7 +10,7 @@ Azure along with services like Microsoft 365 are very widely used today, so it's
 
 This is a free lab from the [Pwned Labs](https://pwnedlabs.io/) platform, which you should definitely check out, if you haven't heard of it yet. They offer real-world cloud security labs for both blue and red team, for beginners and advanced folks, with content covering all three major cloud providers (GCP, AWS, Azure).
 
-For the purposes of this lab, I have a Windows 11 VM and I also recommend you have a Windows VM ready to go. I've disabled real-time protection, so the tools that we're going to use don't trigger it.
+For the purposes of this lab, I have a Windows 11 VM and I recommend you have a Windows VM ready to go as well. I've disabled real-time protection, so the tools that we're going to use don't trigger it.
 
 One final thing to note is that you don't need a VPN for any of the free labs on the platform, just spin the lab up and you're good to go.
 ## Premise
@@ -66,7 +66,9 @@ MFA is not enabled for the Microsoft Graph API, which means that we can enumerat
 
 One thing we're going to require first however is the Microsoft Graph PowerShell SDK. We can find out how to install it from the [Microsoft documentation](https://learn.microsoft.com/en-us/powershell/microsoftgraph/installation?view=graph-powershell-1.0).
 
-`Install-Module Microsoft.Graph -Scope CurrentUser`
+```powershell
+Install-Module Microsoft.Graph -Scope CurrentUser
+```
 
 It can take between 10 to 15 minutes, so take a break while it's installing. You'll just have to confirm the prompts that may appear such as requiring NuGet to continue, if you haven't installed it before.
 
@@ -85,7 +87,7 @@ Get-MgUserLicenseDetail -UserId "Clara.Miller@megabigtech.com"
 Perfect, O365_BUSINESS_ESSENTIALS means that the user has access to Outlook, Teams, SharePoint and other productivity tools.
 ## Using GraphRunner for finding loot
 
-[GraphRunner](https://github.com/dafthack/GraphRunner) is the main star of this lab. It's a post-exploitation toolset for interacting with the Microsoft Graph API. It provides has various modules for authentication, reconnaissance and enumeration, persistence, and pillaging of data from a Microsoft Entra ID (Azure AD) account.
+[GraphRunner](https://github.com/dafthack/GraphRunner) is the main star of this lab. It's a post-exploitation toolset for interacting with the Microsoft Graph API. It provides various modules for authentication, reconnaissance and enumeration, persistence, and pillaging of data from a Microsoft Entra ID (Azure AD) account.
 
 As the walkthrough itself recommends, you should check out the [article on GraphRunner](https://www.blackhillsinfosec.com/introducing-graphrunner/) on the BlackHills Information Security website.
 
@@ -101,7 +103,9 @@ The pillaging modules available are of particular interest to us.
 
 But first, we need to authenticate and get a session with the Graph API.
 
-`Get-GraphTokens -UserPasswordAuth`
+```powershell
+Get-GraphTokens -UserPasswordAuth
+```
 
 ![](Pasted%20image%2020240419195010.png)
 
@@ -175,7 +179,9 @@ Now we can open it and gain access to some more private information.
 
 Let's search that mailbox now as well.
 
-`Invoke-SearchMailbox -Tokens $tokens -SearchTerm "password" -MessageCount 50`
+```powershell
+Invoke-SearchMailbox -Tokens $tokens -SearchTerm "password" -MessageCount 50
+```
 
 ![](Pasted%20image%2020240419201753.png)
 
