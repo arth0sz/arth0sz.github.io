@@ -135,7 +135,7 @@ If you're using an up-to-date version of Impacket, you can also leverage the `jj
 
 The pre-requisites for this attack are the following:
 
-1. A user with "Don't require Kerberos pre-authentication set
+1. A user with "Don't require Kerberos pre-authentication" set
 2. A service to target for the attack
 3. AS-REQ to obtain a ticket for that service
 
@@ -198,7 +198,7 @@ sudo apt install -y libkrb5-dev
 sudo pipx install 'git+https://github.com/aniqfakhrul/powerview.py'
 ```
 
-Now we can use either of the accounts we have credentials for to authenticate
+Now we can use either of the accounts we have credentials for to authenticate to the DC over LDAPS.
 
 ```shell
 powerview rebound.htb/ldap_monitor:'1GR8t@$$4u'@10.10.11.231 --dc-ip 10.10.11.231 -k
@@ -225,7 +225,7 @@ Get-DomainObjectAcl -SecurityIdentifier S-1-5-21-4078382237-1492182817-256812720
 
 ![](Pasted%20image%2020240425221614.png)
 
-This is how obtain the same information which is particular interest to us - oorend has `Self` aka `Self-Membership` rights over the `ServiceMgmt` group. This is a privilege that enables the user to add themselves to a group. 
+This is how obtain the same information which is of particular interest to us - oorend has `Self` aka `Self-Membership` rights over the `ServiceMgmt` group. This is a privilege that enables the user to add themselves to a group. 
 
 This is a different way to reach and follow that exploitation path we saw earlier in BloodHound.
 #### ACLs with NetExec
@@ -280,7 +280,7 @@ This was able to collect data about the other session on `DC01`, which is the us
 
 Now, that already shows up in the initial run of BloodHound.
 
-I found this Cypher query [here](https://phackt.com/pentesting-bloodhound-cypher-queries) that you can run to quickly check All computer with their users logon sessions:
+I found this Cypher query [here](https://phackt.com/pentesting-bloodhound-cypher-queries) that you can run to quickly check All computers with their user logon sessions:
 
 ```txt
 MATCH c=(C:Computer)-[r2:HasSession*1]-(U:User)  WHERE U.name =~ ".*" return c
@@ -288,7 +288,7 @@ MATCH c=(C:Computer)-[r2:HasSession*1]-(U:User)  WHERE U.name =~ ".*" return c
 
 ![](Pasted%20image%2020240426003002.png)
 
-We need a way to access that session or hijack it. A lot of research led me to the [Remote Potato](https://github.com/antonioCoco/RemotePotato0) exploit, which can do help us do exactly that - grab and steal NTLMv2 hashes of every user logged onto a machine.
+We need a way to access that session or hijack it. A lot of research led me to the [Remote Potato](https://github.com/antonioCoco/RemotePotato0) exploit, which can help us do exactly that - grab and steal NTLMv2 hashes of every user logged onto a machine.
 ### Remote Potato
 
 The wiki itself goes into the technical details of how the exploit works:
@@ -334,7 +334,7 @@ Going back to Bloodhound, we can see under **First degree object control** the `
 
 ![](Pasted%20image%2020240426003924.png)
 
-We can do accomplish this in a variety of ways:
+We can accomplish this in a variety of ways:
 #### netexec
 
 The easiest would be with `--gmsa` flag in netexec:
@@ -396,7 +396,7 @@ impacket-getTGT rebound.htb/delegator$ -dc-ip 10.10.11.231 -hashes :43e9069a7308
 
 ![](Pasted%20image%2020240426011204.png)
 
-Now we need to set the `KRB5CCNAME` to that ticket in order to use it with Kerberos with the next command. We'll keep doing that as required.
+Now we need to set the `KRB5CCNAME` environment variable to that ticket in order to use it with Kerberos with the next command. We'll keep doing that as required.
 
 ```shell
 export KRB5CCNAME='delegator$.ccache'
