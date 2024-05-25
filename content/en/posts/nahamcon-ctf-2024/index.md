@@ -4,6 +4,11 @@ date = 2024-05-25T21:30:35+03:00
 draft = false
 +++
 
+
+![](68d2c5f33c7cff2fcd8d7cf20ed8aa2bacd1012ee3bb3c8e60265bebb37eb678.png)
+
+I am very much a newbie when it comes to jeopardy-style CTFs, it seems like an entirely different skillset to hacking away at boxes, but I participated in the NahamCon CTF this year with the [Hack Smarter](https://hacksmarter.org/) team and so I am posting some write-ups.
+
 ## SecureSurfer - Medium
 
 > The tech influencers were right!! SSH _for everything_ really is the future! With `SecureSurfer`, you can surf the world wide web... all through your terminal!  
