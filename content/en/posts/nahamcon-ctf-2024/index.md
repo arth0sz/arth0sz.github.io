@@ -18,7 +18,8 @@ I am very much a newbie when it comes to jeopardy-style CTFs, it seems like an e
 >**Connect with:**  
 >
 >Password is "userpass"
-> `ssh -p 32453 user@challenge.nahamcon.com`
+> 
+>`ssh -p 32453 user@challenge.nahamcon.com`
 
 When you SSH to the target, we are greeted with this interface:
 
