@@ -144,7 +144,7 @@ https://public.interlinked.us/3/lynx-filesystem
 It talks about how we can press G (which stands for Go) to navigate to an arbitrary location/URL. The user is then prompted for a URL to open. If Lynx is misconfigured, we may be able to open 
 files and perform directory listing.
 
-Bu entering `/` or any directory, we can see its contents. Same goes for file://localhost. 
+By entering `/` or any directory, we can see its contents. Same goes for file://localhost. 
 
 Let's inject the following command:
 
