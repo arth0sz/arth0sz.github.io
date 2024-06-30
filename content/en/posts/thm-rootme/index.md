@@ -3,7 +3,6 @@ title = 'TryHackMe RootMe CTF Write-Up'
 date = 2023-05-08T11:09:26+03:00
 draft = false
 toc = false
-image = "0.png"
 +++
 
 ![](0.png)
