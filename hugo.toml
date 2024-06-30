@@ -47,6 +47,19 @@ theme = "hugo-blog-awesome"
 		endLevel = 4 # ToC ends at H4
 		ordered = false # generates <ul> instead of <ol>
 
+
+
+[params]
+  description = 'A blog containing various write-ups of machines along with articles to showcase my cybersecurity journey.'
+  images = ['avatar.jpg']
+  title = 'arth0s' cybersecurity blog'
+  [params.social]
+    facebook_admin = ''
+[taxonomies]
+  series = 'series'
+
+
+
 ############################## English language ################################
 [Languages.en-gb]
   languageName = "English"
