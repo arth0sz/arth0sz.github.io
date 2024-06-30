@@ -51,7 +51,7 @@ theme = "hugo-blog-awesome"
 
 [params]
   description = 'A blog containing various write-ups of machines along with articles to showcase my cybersecurity journey.'
-  images = ['avatar.jpg']
+  image = ['avatar.jpg']
   title = "arth0s' cybersecurity blog"
   [params.social]
     facebook_admin = ''
