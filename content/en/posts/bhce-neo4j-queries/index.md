@@ -16,7 +16,7 @@ I'm going to start with some neo4j queries that are useful for statistics purpos
 
 The following query will return back all groups along with their unique member counts and the group description. It might end up showing you some over-privileged groups and give you a rough target to aim for and dig deeper. 
 
-```cypher
+```crystal
 MATCH (g:Group)<-[:MemberOf*1..]-(u:User) RETURN g.name AS groupName, g.description AS
 groupDescription, COUNT(DISTINCT u) AS numberOfMembers ORDER BY numberOfMembers DESC
 ```
@@ -26,7 +26,7 @@ groupDescription, COUNT(DISTINCT u) AS numberOfMembers ORDER BY numberOfMembers 
 
 This query will just return all the operating systems in use. Very useful to quickly find out if there's any unsupported systems in use in the environment that could provide you with some quick wins.
 
-```cypher
+```crystal
 MATCH (c:Computer) RETURN DISTINCT c.operatingsystem as operatingSystem,
 COUNT(c.operatingsystem) as osCount
 ```
@@ -36,7 +36,7 @@ COUNT(c.operatingsystem) as osCount
 
 This query will return only the krbtgt accounts, and show whether the password was change any time recently. Might give you an idea if that's managed and rotated on a regular basis, or the existence and significance of the account has long been forgotten. 
 
-```cypher
+```crystal
 MATCH (u:User) WHERE u.hasspn = True AND u.name STARTS WITH 'KRBTGT' RETURN u.name AS
 accountName, datetime({ epochSeconds:toInteger(u.pwdlastset) }) AS passwordLastSet
 ```
@@ -48,7 +48,7 @@ You can take the next query and extend this one by adding the account was create
 
 This query will return all Domain Admins in the environment along with the dates the account was created and when their password was last changed. First of all, this gives you a list of all accounts you'd likely want to target. It also provides information on whether there's regular password rotation. This might not mean much, if all the accounts are behind a Privileged Access Management solution. MFA and/or happen to have 16+ character passwords.
 
-```cypher
+```crystal
 MATCH (g:Group) WHERE g.name =~ "(?i).*DOMAIN ADMINS.*" WITH g MATCH (g)<-
 [r:MemberOf*1..]-(u) RETURN u.name AS User,
 datetime({epochSeconds:toInteger(u.pwdlastset)}) as passwordLastSet, datetime({epochSeconds: toInteger(u.whencreated)}) AS dateCreated ORDER BY u.pwdlastset
@@ -59,7 +59,7 @@ datetime({epochSeconds:toInteger(u.pwdlastset)}) as passwordLastSet, datetime({e
 
 This query does the same as the above, except that it relates to service accounts. Kerberoasting is a very well-known and popular attack vector and this can quickly give you an idea of whether passwords are rotated or not. Passwords that haven't been changed in years combined with a weak password policy may give you a quick win.,
 
-```cypher
+```crystal
 MATCH (u:User) WHERE u.hasspn=true AND (NOT u.name STARTS WITH 'KRBTGT') RETURN u.name
 AS accountName, datetime({epochSeconds: toInteger(u.pwdlastset)}) AS passwordLastSet,
 datetime({epochSeconds: toInteger(u.whencreated)}) AS dateCreated ORDER BY u.pwdlastset
@@ -70,7 +70,7 @@ datetime({epochSeconds: toInteger(u.whencreated)}) AS dateCreated ORDER BY u.pwd
 
 I like just using neo4j to read user descriptions. Even if there's not passwords left in there, it may give you a good overview of employees and their roles in the company, potentially revealing targets to focus on.
 
-```cypher
+```crystal
 MATCH (u:User) RETURN u.name as username, u.description as description
 ```
 
@@ -81,7 +81,7 @@ You can add `WHERE u.enabled = True` before the `RETURN` statement in order to l
 
 Another thing you might want to look at is accounts with password never expires set. 
 
-```cypher
+```crystal
 MATCH (u:User {pwdneverexpires: True}) WHERE NOT u.name starts with 'KRBTGT' RETURN
 u.name AS username, u.description AS description, datetime({
 epochSeconds:toInteger(u.lastlogon)}) AS lastLogon ORDER BY lastLogon DESC
@@ -99,7 +99,7 @@ Ideally, users in the Domain Admins or Administrators should not log on to works
 
 The first part of the query will look for and match the Domain Controllers so that we can exclude them as we wouldn't really need to look for paths to DA if we had compromised the DC already.  This will be utilised a few times in various queries.
 
-```cypher
+```crystal
 MATCH (c1:Computer)-[:MemberOf*1..]->(g:Group) WHERE g.objectid ENDS WITH '-516' WITH
 COLLECT(c1.name) AS domainControllers
 MATCH (n:User)-[:MemberOf*1..]->(g:Group) WHERE g.objectid ENDS WITH '-512' OR
@@ -113,7 +113,7 @@ p
 
 This query will look for computers with Unconstrained Delegation configured to either give you a potential target to aim for or a vulnerability to fix.
 
-```cypher
+```crystal
 MATCH (c1:Computer)-[:MemberOf*1..]->(g:Group) WHERE g.objectid ENDS WITH '-516' WITH
 COLLECT(c1.name) AS domainControllers
 MATCH (c:Computer {unconstraineddelegation:true}) WHERE NOT c.name IN domainControllers
@@ -125,7 +125,7 @@ RETURN c
 
 I think the query searching for Constrained Delegation is pretty well-known, but it would be remiss of me not to include it after Unconstrained Delegation.
 
-```cypher
+```crystal
 MATCH p = ((u:User)-[r:AllowedToDelegate]->(c:Computer)) RETURN p
 ```
 
@@ -137,7 +137,7 @@ This is one of the main queries we know and love, covering a couple of tweaks I 
 
 The query is essentially the following at a high level: find the shortest path from users with the following rights regardless of how many steps are in-between to groups, where the users are enabled and the group is Domain Admins (whose SID ends with `-512`).
 
-```cypher
+```crystal
 MATCH p=shortestPath((n:User)-[:Owns|GenericAll|GenericWrite|WriteOwner|WriteDacl|MemberOf|ForceChangePassword|AllExtendedRights|AddMember|HasSession|Contains|GPLink|AllowedToDelegate|TrustedBy|AllowedToAct|AdminTo|CanPSRemote|CanRDP|ExecuteDCOM|HasSIDHistory|AddSelf|DCSync|ReadLAPSPassword|ReadGMSAPassword|DumpSMSAPassword|SQLAdmin|AddAllowedToAct|WriteSPN|AddKeyCredentialLink|SyncLAPSPassword|WriteAccountRestrictions|GoldenCert|ADCSESC1|ADCSESC3|ADCSESC4|ADCSESC5|ADCSESC6a|ADCSESC6b|ADCSESC7|ADCSESC9a|ADCSESC9b|ADCSESC10a|ADCSESC10b|ADCSESC13|DCFor*1..]->(m:Group))
 WHERE n.enabled = True AND m.objectid ENDS WITH "-512"
 RETURN p
@@ -152,7 +152,7 @@ We can narrow things as follows:
 
 Change `n.enabled` to `n.hasspn` and you have the shortest path to Domain Admins from Kerberoastable users. Maybe you already know how to compromise one, maybe this will give you a target to aim for.
 
-```cypher
+```crystal
 MATCH p=shortestPath((n:User)-[:Owns|GenericAll|GenericWrite|WriteOwner|WriteDacl|MemberOf|ForceChangePassword|AllExtendedRights|AddMember|HasSession|Contains|GPLink|AllowedToDelegate|TrustedBy|AllowedToAct|AdminTo|CanPSRemote|CanRDP|ExecuteDCOM|HasSIDHistory|AddSelf|DCSync|ReadLAPSPassword|ReadGMSAPassword|DumpSMSAPassword|SQLAdmin|AddAllowedToAct|WriteSPN|AddKeyCredentialLink|SyncLAPSPassword|WriteAccountRestrictions|GoldenCert|ADCSESC1|ADCSESC3|ADCSESC4|ADCSESC5|ADCSESC6a|ADCSESC6b|ADCSESC7|ADCSESC9a|ADCSESC9b|ADCSESC10a|ADCSESC10b|ADCSESC13|DCFor*1..]->(m:Group))
 WHERE n.hasspn = True AND m.objectid ENDS WITH "-512"
 RETURN p
@@ -165,10 +165,7 @@ One of my favourites in BloodHound that I dearly missed the first time I ever tr
 
 If instead you use `WHERE n.system_tags CONTAINS "owned"`, you get the shortest path from owned users. That one took me a while to figure out as there was a subtle, but important change between versions - in the legacy version of BloodHound you could just do `n.owned = True`.
 
-```cypher
-// BloodHound
-// Shortest Path to Domain Admin From Kerberoastable Users
-
+```crystal
 MATCH p=shortestPath((n:User)-[:Owns|GenericAll|GenericWrite|WriteOwner|WriteDacl|MemberOf|ForceChangePassword|AllExtendedRights|AddMember|HasSession|Contains|GPLink|AllowedToDelegate|TrustedBy|AllowedToAct|AdminTo|CanPSRemote|CanRDP|ExecuteDCOM|HasSIDHistory|AddSelf|DCSync|ReadLAPSPassword|ReadGMSAPassword|DumpSMSAPassword|SQLAdmin|AddAllowedToAct|WriteSPN|AddKeyCredentialLink|SyncLAPSPassword|WriteAccountRestrictions|GoldenCert|ADCSESC1|ADCSESC3|ADCSESC4|ADCSESC5|ADCSESC6a|ADCSESC6b|ADCSESC7|ADCSESC9a|ADCSESC9b|ADCSESC10a|ADCSESC10b|ADCSESC13|DCFor*1..]->(m:Group))
 WHERE n.system_tags CONTAINS "owned" AND m.objectid ENDS WITH "-512"
 RETURN p
@@ -185,7 +182,7 @@ Here I marked a few users as owned at random. You can also just leave it as `((n
 
 This next query will show you paths to Domain Admins from Computers. 
 
-```cypher
+```crystal
 MATCH (c1:Computer)-[:MemberOf*1..]->(g:Group) WHERE g.objectid ENDS WITH '-516' WITH COLLECT(c1.name) AS domainControllers
 MATCH p=shortestPath((n:Computer)-[:Owns|GenericAll|GenericWrite|WriteOwner|WriteDacl|MemberOf|ForceChangePassword|AllExtendedRights|AddMember|HasSession|Contains|GPLink|AllowedToDelegate|TrustedBy|AllowedToAct|AdminTo|CanPSRemote|CanRDP|ExecuteDCOM|HasSIDHistory|AddSelf|DCSync|ReadLAPSPassword|ReadGMSAPassword|DumpSMSAPassword|SQLAdmin|AddAllowedToAct|WriteSPN|AddKeyCredentialLink|SyncLAPSPassword|WriteAccountRestrictions|GoldenCert|ADCSESC1|ADCSESC3|ADCSESC4|ADCSESC5|ADCSESC6a|ADCSESC6b|ADCSESC7|ADCSESC9a|ADCSESC9b|ADCSESC10a|ADCSESC10b|ADCSESC13|DCFor*1..]->(m:Group))
 WHERE NOT n.name IN domainControllers AND m.objectid ENDS WITH "-512"
@@ -202,7 +199,7 @@ When you review the default queries in BloodHound CE, you will see that there ar
 The latter actually talks about how edges have been incorporated into BloodHound (a bit more on that later) for various escalation paths, which includes ESC3, but I wanted to craft my own query for it as well. The following query matches all principles that have enrolment rights (+ a very quick check for other excessive rights) on certificate templates published to the EnterpriseCA, where manager approval is disabled, there are no authorized signatures required or the PKI schema version is 1, and the certificate template has Certificate Request Agent as EKU (Extended Key Usage). 
 #### ESC3
 
-```cypher
+```crystal
 MATCH p = ()-[:Enroll|GenericAll|AllExtendedRights]->(ct:CertTemplate)-[:PublishedTo]->(:EnterpriseCA) Where "1.3.6.1.4.1.311.20.2.1" IN ct.ekus AND ct.requiresmanagerapproval = False
 AND (ct.authorizedsignatures = 0 OR ct.schemaversion = 1) return p	 
 ```
@@ -213,7 +210,7 @@ In this case, the query will return that the Domain Users in the `essos.local` a
 
 We can add `WHERE n.admincount = False` to the query as well to exclude any accounts with elevated rights from the visualization. The same will be utilised in the next query.
 
-```cypher
+```crystal
 MATCH p = (n)-[:Enroll|GenericAll|AllExtendedRights]->(ct:CertTemplate)-[:PublishedTo]->(:EnterpriseCA) WHERE n.admincount = False AND "1.3.6.1.4.1.311.20.2.1" IN ct.ekus AND ct.requiresmanagerapproval = False
 AND (ct.authorizedsignatures = 0 OR ct.schemaversion = 1) return p	
 ```
@@ -223,7 +220,7 @@ AND (ct.authorizedsignatures = 0 OR ct.schemaversion = 1) return p
 
 This following query will display all available ADCS edges in BloodHound so long as the ingestor has managed to collect the required information. This leaves us again with the *Domain Users* for the aforementioned domains who can abuse both ESC1 and ESC3. We also see an edge for ESC4, which is the next one I will cover.
 
-```cypher
+```crystal
 MATCH p= ((n)-[:ADCSESC1|ADCSESC3|ADCSESC4|ADCSESC5|ADCSESC6a|ADCSESC6b|ADCSESC7|ADCSESC9a|ADCSESC9b|ADCSESC10a|ADCSESC10b|ADCSESC13]->()) WHERE n.admincount = False
 RETURN p
 ```
@@ -234,7 +231,7 @@ RETURN p
 
 Very briefly, ESC4 is when a user has write privileges over a certificate template. We can just search for edges that will give a user those rights. The first part of the query is another way to exclude admin users from our search. It will match any users in Domain Admins or the Administrators group and collect them under the name `adminsGroup`, which we can then use to exclude them: `WHERE NOT u.name in adminsGroups`. The query gives us the exact same result as the built-in edge we just saw.
 
-```cypher
+```crystal
 MATCH (n:User)-[:MemberOf*1..]->(g:Group) WHERE g.objectid ENDS WITH '-512' OR g.objectid ENDS WITH '-544' WITH COLLECT(n.name) AS adminsGroups
 MATCH p = (u:User)-[:WriteDacl|GenericAll|AllExtendedRights|GenericWrite|Owns]->(ct:CertTemplate)-[:PublishedTo]->(:EnterpriseCA) WHERE NOT u.name in adminsGroups
 RETURN p
@@ -245,7 +242,7 @@ RETURN p
 
 The last escalation path I will cover is ESC7 which is a simple one to find. If we have a user with `ManageCA` permissions, they can grant themselves the `Manage Certificates` right as well and proceed with the escalation path abuse.
 
-```cypher
+```crystal
 MATCH (n:User)-[:MemberOf*1..]->(g:Group) WHERE g.objectid ENDS WITH '-512' OR g.objectid ENDS WITH '-544' WITH COLLECT(n.name) AS adminsGroups
 MATCH p = (u:User)-[:ManageCA]->(:EnterpriseCA) WHERE NOT u.name in adminsGroups
 RETURN p
