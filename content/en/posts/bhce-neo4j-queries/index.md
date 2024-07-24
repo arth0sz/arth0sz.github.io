@@ -1,20 +1,22 @@
 +++
 title = 'BloodHound CE and neo4j queries - statistics, ADCS and more'
-date = 2024-07-23T23:30:08+03:00
+date = 2024-07-24T20:30:08+03:00
 draft = false
 +++
 
-The goal of this blog post to showcase some queries in neo4j and the BloodHound GUI, including how to hunt for some ADCS escalation paths beyond the defaults available in BloodHound.
+The goal of this blog post is to showcase some queries in neo4j and the BloodHound GUI, including how to hunt for some ADCS escalation paths beyond the defaults available in BloodHound.
 
-Until recently I had exclusively been using the now legacy version of BloodHound with my old friend the `bloodhound-python` ingestor. I decided it's time to explore BloodHound Community Edition and I ended up experimenting quite a lot with custom queries both directly in the neo4j database and the BloodHound GUI itself. I ended up figuring out how Cypher works (more or less), reading a ton of queries other people have written, picking and choosing, adapting and tinkering to achieve my desired results. (*I also finally figured out how to do shortest paths from owned principals, I was ready to pick up a pitchfork and dismiss CE due to the lack of that alone.*)
+Until recently I had exclusively been using the now legacy version of BloodHound with my trusty old friend the `bloodhound-python` ingestor. I decided it's time to explore BloodHound Community Edition and I ended up experimenting quite a lot with custom queries both directly in the neo4j database and the BloodHound GUI itself. I ended up figuring out how Cypher works (more or less), reading a ton of queries other people have written, picking and choosing, adapting and tinkering to achieve my desired results. (*I also finally figured out how to do shortest paths from owned principals, I was ready to pick up a pitchfork and dismiss CE due to the lack of that alone.*)
 
-I won't be going through how to set up BHCE or import data or any of that, deployment is straightforward via Docker. I'm using the latest version of BHCE and the SharpHound ingestor included with it at the time of writing. The data used for demonstration purposes was collected in my home lab setup of [GOAD](https://github.com/Orange-Cyberdefense/GOAD) + some additions of vulnerable ADCS templates taken from my own [ADCS project](https://github.com/arth0sz/Practice-AD-CS-Domain-Escalation) on GitHub and a few extra misconfigurations here and there. 
+I won't be going through how to set up BHCE or import data or any of that, deployment is straightforward via Docker. Nor is this meant to teach you Cypher, just to open you up to the possibilities it offers and maybe get you some quick wins.
+
+I'm using the latest version of BHCE and the SharpHound ingestor included with it at the time of writing. The data used for demonstration purposes was collected in my home lab setup of [GOAD](https://github.com/Orange-Cyberdefense/GOAD) + some additions of vulnerable ADCS templates taken from my own [ADCS project](https://github.com/arth0sz/Practice-AD-CS-Domain-Escalation) on GitHub and a few extra misconfigurations here and there. 
 ## Neo4J queries for statistics
 
-I'm going to start with some neo4j queries that are useful for statistics purposes and for providing a quick and dirty overview of the environment. It's not as pretty and polished as the GUI, but it will give you the results in tables you can export as `.cvs` files and will enable you to quickly summarise some information and perform some searches that aren't possible in BloodHound itself. 
+I'm going to start with some neo4j queries that are useful for statistics purposes and for providing a quick and dirty overview of the environment. It's not as pretty and polished as the GUI, but it will give you the results in tables you can export as `.cvs` files and will enable you to quickly summarise different kinds of information and perform some searches that aren't possible in BloodHound itself. 
 #### Users by group
 
-The following query will return back all groups along with their unique member counts and the group description. It might end up showing you some over-privileged groups and give you a rough target to aim for and dig deeper. 
+The following query will return back all groups along with their unique member counts and the group description. It might end up showing you some over-privileged custom groups and give you a rough target to aim for and dig deeper. 
 
 ```crystal
 MATCH (g:Group)<-[:MemberOf*1..]-(u:User) RETURN g.name AS groupName, g.description AS
@@ -24,7 +26,7 @@ groupDescription, COUNT(DISTINCT u) AS numberOfMembers ORDER BY numberOfMembers 
 ![](Pasted%20image%2020240716231148.png)
 #### Operating systems
 
-This query will just return all the operating systems in use. Very useful to quickly find out if there's any unsupported systems in use in the environment that could provide you with some quick wins.
+This query will just return all the operating systems in use. Very useful to quickly find out if there's any unsupported systems present in the environment that could provide you with some quick wins.
 
 ```crystal
 MATCH (c:Computer) RETURN DISTINCT c.operatingsystem as operatingSystem,
@@ -34,7 +36,7 @@ COUNT(c.operatingsystem) as osCount
 ![](Pasted%20image%2020240716231305.png)
 #### Krbtgt accounts
 
-This query will return only the krbtgt accounts, and show whether the password was change any time recently. Might give you an idea if that's managed and rotated on a regular basis, or the existence and significance of the account has long been forgotten. 
+This query will return only the krbtgt accounts, and show whether the password was changed any time recently. Might give you an idea if that's managed and rotated on a regular basis, or the existence and significance of the account has long been forgotten. 
 
 ```crystal
 MATCH (u:User) WHERE u.hasspn = True AND u.name STARTS WITH 'KRBTGT' RETURN u.name AS
@@ -43,10 +45,10 @@ accountName, datetime({ epochSeconds:toInteger(u.pwdlastset) }) AS passwordLastS
 
 ![](Pasted%20image%2020240716231352.png)
 
-You can take the next query and extend this one by adding the account was created as well.
+You can take the next query and extend this one by adding the date the account was created as well.
 #### Domain Admins and password last set
 
-This query will return all Domain Admins in the environment along with the dates the account was created and when their password was last changed. First of all, this gives you a list of all accounts you'd likely want to target. It also provides information on whether there's regular password rotation. This might not mean much, if all the accounts are behind a Privileged Access Management solution. MFA and/or happen to have 16+ character passwords.
+This query will return all Domain Admins in the environment along with the dates the account was created and when their password was last changed. First of all, this gives you a list of all accounts you'd likely want to target. It also provides information on whether there's regular password rotation. This might not mean much, if all the accounts are behind a Privileged Access Management solution, MFA and/or happen to have 16+ character passwords.
 
 ```crystal
 MATCH (g:Group) WHERE g.name =~ "(?i).*DOMAIN ADMINS.*" WITH g MATCH (g)<-
@@ -57,7 +59,7 @@ datetime({epochSeconds:toInteger(u.pwdlastset)}) as passwordLastSet, datetime({e
 ![](Pasted%20image%2020240716231609.png)
 #### Service accounts, password last set, date created
 
-This query does the same as the above, except that it relates to service accounts. Kerberoasting is a very well-known and popular attack vector and this can quickly give you an idea of whether passwords are rotated or not. Passwords that haven't been changed in years combined with a weak password policy may give you a quick win.,
+This query does the same as the above, except that it relates to service accounts. Kerberoasting is a very well-known and popular attack vector and this can quickly give you an idea of whether passwords are rotated or not. Passwords that haven't been changed in years combined with a weak password policy may give you a quick win.
 
 ```crystal
 MATCH (u:User) WHERE u.hasspn=true AND (NOT u.name STARTS WITH 'KRBTGT') RETURN u.name
@@ -68,7 +70,7 @@ datetime({epochSeconds: toInteger(u.whencreated)}) AS dateCreated ORDER BY u.pwd
 ![](Pasted%20image%2020240716231746.png)
 #### Users and descriptions
 
-I like just using neo4j to read user descriptions. Even if there's not passwords left in there, it may give you a good overview of employees and their roles in the company, potentially revealing targets to focus on.
+I like just using neo4j to read user descriptions. Even if there aren't any passwords left in there, it may give you a good overview of employees and their roles in the company, potentially revealing targets to focus on.
 
 ```crystal
 MATCH (u:User) RETURN u.name as username, u.description as description
@@ -135,7 +137,7 @@ MATCH p = ((u:User)-[r:AllowedToDelegate]->(c:Computer)) RETURN p
 This is one of the main queries we know and love, covering a couple of tweaks I find to be useful. The query includes any and all edges that can be abused to move forward.
 ##### From Enabled Users
 
-The query is essentially the following at a high level: find the shortest path from users with the following rights regardless of how many steps are in-between to groups, where the users are enabled and the group is Domain Admins (whose SID ends with `-512`).
+The query is essentially the following at a high level: find the shortest path from users with the following rights, regardless of how many steps are in-between to groups, where the users are enabled and the group is Domain Admins (whose SID ends with `-512`).
 
 ```crystal
 MATCH p=shortestPath((n:User)-[:Owns|GenericAll|GenericWrite|WriteOwner|WriteDacl|MemberOf|ForceChangePassword|AllExtendedRights|AddMember|HasSession|Contains|GPLink|AllowedToDelegate|TrustedBy|AllowedToAct|AdminTo|CanPSRemote|CanRDP|ExecuteDCOM|HasSIDHistory|AddSelf|DCSync|ReadLAPSPassword|ReadGMSAPassword|DumpSMSAPassword|SQLAdmin|AddAllowedToAct|WriteSPN|AddKeyCredentialLink|SyncLAPSPassword|WriteAccountRestrictions|GoldenCert|ADCSESC1|ADCSESC3|ADCSESC4|ADCSESC5|ADCSESC6a|ADCSESC6b|ADCSESC7|ADCSESC9a|ADCSESC9b|ADCSESC10a|ADCSESC10b|ADCSESC13|DCFor*1..]->(m:Group))
@@ -147,7 +149,7 @@ That actually returns quite a lot of information, even though this is a small en
 
 ![](Pasted%20image%2020240722233749.png)
 
-We can narrow things as follows:
+We can narrow things down as follows:
 ##### From Kerberoastable Users
 
 Change `n.enabled` to `n.hasspn` and you have the shortest path to Domain Admins from Kerberoastable users. Maybe you already know how to compromise one, maybe this will give you a target to aim for.
@@ -192,9 +194,9 @@ RETURN p
 ![](Pasted%20image%2020240722234920.png)
 ### ADCS
 
-I have a strange love for ADCS and the various ways it can be broken, so I was interested to see what this version of BloodHound can find in that regard. This is not only useful for attacking ADCS, but also for auditing the security of the ADCS currently in use in the given environment.
+I have a strange love for ADCS and the various ways it can be misconfigured, so I was interested to see what this version of BloodHound can find in that regard. This is not only useful for attacking ADCS, but also for auditing the security of the ADCS currently in use in the given environment.
 
-When you review the default queries in BloodHound CE, you will see that there are default queries available for ESC1 and ESC2. I'm not going to get into depth on the requirements for the escalation paths as SpecterOps and various security researches have already done that, you can read the thorough breakdowns by SpecterOps for the first two in BloodHound [here](https://posts.specterops.io/adcs-attack-paths-in-bloodhound-part-1-799f3d3b03cf) and [here](https://posts.specterops.io/adcs-attack-paths-in-bloodhound-part-1-799f3d3b03cf). 
+When you review the default queries in BloodHound CE, you will see that there are queries available for ESC1 and ESC2. I'm not going to get into depth on the requirements for the escalation paths as SpecterOps and various security researches have already done that, you can read the thorough breakdowns by SpecterOps for the first two in BloodHound [here](https://posts.specterops.io/adcs-attack-paths-in-bloodhound-part-1-799f3d3b03cf) and [here](https://posts.specterops.io/adcs-attack-paths-in-bloodhound-part-1-799f3d3b03cf). 
 
 The latter actually talks about how edges have been incorporated into BloodHound (a bit more on that later) for various escalation paths, which includes ESC3, but I wanted to craft my own query for it as well. The following query matches all principles that have enrolment rights (+ a very quick check for other excessive rights) on certificate templates published to the EnterpriseCA, where manager approval is disabled, there are no authorized signatures required or the PKI schema version is 1, and the certificate template has Certificate Request Agent as EKU (Extended Key Usage). 
 #### ESC3
@@ -251,7 +253,7 @@ RETURN p
 ![](Pasted%20image%2020240716232727.png)
 ## Final Words
 
-If you've made it this far, thanks for reading and hope you've found something useful here. There are countless queries you can utilise in neo4j to get summaries, overview and statistics depending on your wants and needs, so the few listed here are just the beginning. 
+If you've made it this far, thanks for reading and hope you've found something useful here. There are countless queries you can utilise in neo4j to get summaries, overviews and statistics depending on your wants and needs, so the few listed here are just the beginning. 
 
 There are plenty of good and well-known extensive lists of BloodHound queries available as well, though not all have been updated to fit the Community Edition. You won't find the exact things I've listed here as I've adapted things to fit my own goals and everyone utilises Cypher a bit differently. 
 
