@@ -15,12 +15,9 @@ For the purposes of this lab, I have a Windows 11 VM and I recommend you have a 
 One final thing to note is that you don't need a VPN for any of the free labs on the platform, just spin the lab up and you're good to go.
 ## Premise
 
-The premise for this lab is that our read team has successfully phished a Mega Big Tech employee and we've obtained their credentials. Our task is to gain access to customer records and demonstrate impact. Below are the credentials we have:
+The premise for this lab is that our read team has successfully phished a Mega Big Tech employee and we've obtained their credentials. Our task is to gain access to customer records and demonstrate impact. 
+The credentials are provided to you at the beginning of the lab.
 
-```txt
-IAM User: Clara.Miller@megabigtech.com
-Password: MegaBigTech99
-```
 ### Outcomes
 
 The outcomes or objectives of the lab include identifying Microsoft services with no multi-factor authentication enabled with the help of MFASweep, exfiltrating data from SharePoint, Teams and Exchange Online, and leveraging information we discover to pillage data from an Azure SQL database.
@@ -50,7 +47,7 @@ Afterwards we can run the following command to check for MFA.
 
 ```powershell
 . .\MFASweep.ps1
-Invoke-MFASweep -Username Clara.Miller@megabigtech.com -Password MegaBigTech99 -Recon -IncludeADFS
+Invoke-MFASweep -Username C****.M*****@***********.com -Password M*********99 -Recon -IncludeADFS
 ```
 
 ![](Pasted%20image%2020240419192409.png)
@@ -79,7 +76,7 @@ Now that we've installed the SDK, we can log into Azure with the `Connect-MgGrap
 It's time to check if our user has been assigned a Microsoft 365 license with the following command:
 
 ```powershell
-Get-MgUserLicenseDetail -UserId "Clara.Miller@megabigtech.com"
+Get-MgUserLicenseDetail -UserId "C****.M*****@***********.com"
 ```
 
 ![](Pasted%20image%2020240419193802.png)
@@ -187,13 +184,12 @@ Invoke-SearchMailbox -Tokens $tokens -SearchTerm "password" -MessageCount 50
 
 Trying to proceed with downloading the files actually results in some errors and provides us with nothing of interest, but there's already a wealth of information in the message preview.
 
-We have a username, a password
-, a server and a database name:
+We have a username, a password, a server and a database name:
 
 ```txt
-Username: financereports
-Password: $reporting$123
-Server: mbt-finance.database.windows.net
+Username: fi**********ts
+Password: $r********$123
+Server: ***-*******.database.windows.net
 Database: Finance
 ```
 
